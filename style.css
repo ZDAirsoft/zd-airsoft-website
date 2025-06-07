@@ -11,7 +11,7 @@ body {
   line-height: 1.6;
 }
 
-/* Banner Logo Header */
+/* Banner Header */
 .banner-header {
   width: 100%;
   text-align: center;
@@ -22,6 +22,8 @@ body {
   width: 100%;
   height: auto;
   display: block;
+  max-height: 200px;
+  object-fit: contain;
 }
 
 /* Navigation Bar */
@@ -38,9 +40,29 @@ body {
   font-weight: bold;
   transition: color 0.3s;
 }
-
 .main-nav a:hover {
   color: #e63946;
+}
+
+/* Global Section Header */
+.section-title {
+  color: #e63946;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  margin: 0.5rem auto 0;
+  height: 3px;
+  background: #e63946;
+  border-radius: 5px;
 }
 
 /* Hero Section */
@@ -72,26 +94,17 @@ button:hover {
 }
 
 /* Sections */
-/* === ABOUT US SECTION === */
-
-#about {
-  background-color: #1a1a1a;
-  color: #f0f0f0;
-  padding: 3rem 2rem;
-  max-width: 1100px;
+section {
+  padding: 2.5rem 1.5rem;
+  max-width: 900px;
   margin: auto;
-  border-top: 2px solid #e63946;
-  border-bottom: 2px solid #e63946;
-  font-family: 'Segoe UI', sans-serif;
 }
 
-#about h2 {
-  color: #e63946;
-  font-size: 2.2rem;
-  margin-bottom: 1rem;
-  text-align: center;
+ul li {
+  margin: 0.5rem 0;
 }
 
+/* About Section */
 #about .summary {
   font-size: 1.1rem;
   line-height: 1.8;
@@ -111,12 +124,6 @@ button:hover {
   border-radius: 5px;
 }
 
-#about .core-values h3 {
-  color: #e63946;
-  margin-bottom: 0.75rem;
-  font-size: 1.5rem;
-}
-
 #about .core-values ul {
   list-style: none;
   padding-left: 0;
@@ -133,33 +140,6 @@ button:hover {
   position: absolute;
   left: 0;
   color: #06d6a0;
-}
-
-@media (max-width: 768px) {
-  #about {
-    padding: 2rem 1rem;
-  }
-
-  #about h2 {
-    font-size: 1.8rem;
-  }
-
-  #about .core-values h3 {
-    font-size: 1.3rem;
-  }
-}
-section {
-  padding: 2.5rem 1.5rem;
-  max-width: 900px;
-  margin: auto;
-}
-h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #e63946;
-}
-ul li {
-  margin: 0.5rem 0;
 }
 
 /* Booking Form */
@@ -182,7 +162,7 @@ a {
   color: #e63946;
 }
 
-/* Responsive Adjustments */
+/* Responsive */
 @media (max-width: 768px) {
   .main-nav a {
     display: block;
@@ -195,6 +175,5 @@ a {
 
   .banner-logo {
     max-height: 150px;
-    object-fit: contain;
   }
 }
