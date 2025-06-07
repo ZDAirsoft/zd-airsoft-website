@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Z&D Airsoft | Mobile Tactical Fun</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" />
+  <nav>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#booking">Book Now</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Mobile Airsoft & Nerf Missions</h1>
+  <p>Veteran-Owned. Fully Enclosed. 100% Tactical Fun.</p>
+  <button onclick="document.getElementById('booking').scrollIntoView({ behavior: 'smooth' })">Book Now</button>
+</section>
+
+<section id="about">
+  <h2>About Us</h2>
+  <p>
+    Welcome to <strong>Z&D Airsoft, LLC</strong><br><br>
+    Based in Findlay, Ohio, veteran-owned and operated by a former U.S. Marine. We deliver a safe, structured mobile experience for all ages at schools, fairs, and festivals.
+    <br><br>
+    • Nerf (ages 6+) <br>
+    • Airsoft (ages 8+) <br>
+    • Gear + safety included <br><br>
+    10% of profits go to charity every quarter.
+  </p>
+</section>
+
+<section id="services">
+  <h2>Why Choose Us?</h2>
+  <ul>
+    <li>🎖️ Veteran-Owned & Operated</li>
+    <li>🔌 Silent & Self-Contained Power</li>
+    <li>🎯 Smart Targets</li>
+    <li>🛡️ No PvP Combat</li>
+    <li>📦 Flexible Pricing</li>
+  </ul>
+</section>
+
+<section id="booking">
+  <h2>Booking</h2>
+  <form name="booking" method="POST" data-netlify="true">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Email Address" required>
+    <textarea name="message" placeholder="Tell us about your event..." required></textarea>
+    <button type="submit">Send Booking Request</button>
+  </form>
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <p>Email: <a href="mailto:info@zdairsoft.com">info@zdairsoft.com</a></p>
+  <p>Based in Findlay, OH</p>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
