@@ -1,0 +1,46 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #000;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav a {
+  color: #eee;
+  margin-left: 1rem;
+  text-decoration: none;
+}
+.hero {
+  background: #1e1e1e;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+.hero h1 {
+  color: #e63946;
+}
+button {
+  background: #e63946;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+}
+input, textarea {
+  padding: 0.75rem;
+  border-radius: 5px;
+  border: none;
+}
