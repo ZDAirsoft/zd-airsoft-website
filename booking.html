@@ -22,69 +22,65 @@
   </div>
 </header>
 
-
-<section>
+<!-- AVAILABILITY CALENDAR -->
+<section class="framed-section">
   <h2 class="section-title">Check Our Availability</h2>
-  <div style="max-width: 900px; margin: auto;">
-    <!-- Replace YOUR_CALENDAR_ID with your real Google Calendar ID -->
-    <iframe 
-      src="https://calendar.google.com/calendar/embed?src=c_2e60f19320946197e4fc4672426cfbe9d224867e8c65507ef464663ec256961f@group.calendar.google.com&ctz=America%2FNew_York" 
-      style="border: 0" 
-      width="100%" 
-      height="600" 
-      frameborder="0" 
-      scrolling="no">
-    </iframe>
-  </div>
+  <p class="tagline">View our real-time booking calendar</p>
+  <iframe 
+    src="https://calendar.google.com/calendar/embed?src=c_2e60f19320946197e4fc4672426cfbe9d224867e8c65507ef464663ec256961f@group.calendar.google.com&ctz=America%2FNew_York" 
+    height="600">
+  </iframe>
 </section>
-  
-<section>
+
+<!-- PRICING AND OPTIONS -->
+<section class="framed-section">
   <h2 class="section-title">Pricing & Booking Options</h2>
-  <p style="text-align: center; font-size: 1.1rem; margin-bottom: 2rem;">
-    Flexible Packages for Every Type of Event
+  <p class="tagline">Flexible Packages for Every Type of Event</p>
+
+  <p>
+    Z&D Airsoft brings the mission to you with safe, structured airsoft and Nerf gameplay—perfect for private parties, school field days, community festivals, and corporate events.
   </p>
 
-  <div style="max-width: 800px; margin: auto; font-size: 1rem; line-height: 1.6;">
-    <p>
-      Z&D Airsoft brings the mission to you with safe, structured airsoft and Nerf gameplay—perfect for private parties, school field days, community festivals, and corporate events.
-    </p>
+  <h3 class="highlight-title">🎯 Pay-to-Play Model (Ideal for Public Events & Festivals)</h3>
+  <ul class="about-list">
+    <li>$5 – 1 Magazine (Approx. 5 minutes or 100 BBs)</li>
+    <li>$10 – 3 Magazines (Up to 10 minutes) – <strong>Best Value!</strong></li>
+    <li>Safe, quick, and fun for individuals or families</li>
+    <li>Revenue sharing or vendor fees available depending on event policies</li>
+  </ul>
 
-    <h3 style="color:#ffd166; margin-top: 1.5rem;">🎯 Pay-to-Play Model <span style="font-size: 0.9rem;">(Ideal for Public Events & Festivals)</span></h3>
-    <ul>
-      <li>$5 – 1 Magazine (Approx. 5 minutes or 100 BBs)</li>
-      <li>$10 – 3 Magazines (Up to 10 minutes) – <strong>Best Value!</strong></li>
-      <li>Safe, quick, and fun for individuals or families</li>
-      <li>Revenue sharing or vendor fees available depending on event policies</li>
-    </ul>
+  <h3 class="highlight-title">🎉 Flat-Rate Private Event Packages</h3>
+  <ul class="about-list">
+    <li><strong>Small Event</strong> (Up to 50 participants): $300 for 3 hours + $50/hr extra</li>
+    <li><strong>Medium Event</strong> (50–100 participants): $400 for 4 hours + $50/hr extra</li>
+    <li><strong>Large Event</strong> (100+ participants): $500 for 5 hours + $50/hr extra</li>
+    <li>Accommodates up to 36 participants per hour (5-minute rotations)</li>
+  </ul>
 
-    <h3 style="color:#ffd166; margin-top: 1.5rem;">🎉 Flat-Rate Private Event Packages</h3>
-    <ul>
-      <li><strong>Small Event</strong> (Up to 50 participants)<br>$300 for 3 hours<br>$50 per additional hour</li>
-      <li><strong>Medium Event</strong> (50–100 participants)<br>$400 for 4 hours<br>$50 per additional hour</li>
-      <li><strong>Large Event</strong> (100+ participants)<br>$500 for 5 hours<br>$50 per additional hour</li>
-      <li>Accommodates up to 36 participants per hour (5-minute rotations)</li>
-    </ul>
-
-    <h3 style="color:#ffd166; margin-top: 1.5rem;">🤝 Let’s Work Together for a Good Cause</h3>
-    <p>
-      We are proud to support our local community. Z&D Airsoft is open to partnering with businesses, schools, or nonprofits to support charity drives, fundraising events, and community outreach.
-    </p>
-    <p>
-      Interested? Use our <a href="contact.html">Contact Us</a> form to get in touch and tell us about your event idea—we’d love to help make it a success.
-    </p>
-  </div>
+  <h3 class="highlight-title">🤝 Let’s Work Together for a Good Cause</h3>
+  <p>
+    We are proud to support our local community. Z&D Airsoft partners with businesses, schools, or nonprofits to support charity drives, fundraising events, and outreach.
+  </p>
+  <p>
+    Interested? Use our <a href="contact.html">Contact Us</a> form to get in touch—we’d love to help!
+  </p>
 </section>
 
-<section>
+<!-- BOOKING FORM -->
+<section class="framed-section">
   <h2 class="section-title">Request a Booking</h2>
+  <p class="tagline">Send us your event details and we’ll be in touch</p>
   <form name="booking" method="POST" data-netlify="true">
     <input type="text" name="name" placeholder="Your Name" required />
     <input type="email" name="email" placeholder="Email Address" required />
     <input type="text" name="event-type" placeholder="Event Type (e.g. Birthday, School, Festival)" required />
     <textarea name="details" placeholder="Tell us about your event!" rows="6" required></textarea>
-    <button type="submit">Send Booking Request</button>
+    <div class="centered-button">
+      <button type="submit">📬 Send Booking Request</button>
+    </div>
   </form>
 </section>
 
+<script src="js/script.js"></script>
 </body>
 </html>
