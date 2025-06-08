@@ -1,24 +1,40 @@
-/* Base Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* === GENERAL SITE STYLES === */
+
 body {
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: #eee;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #fff;
   line-height: 1.6;
 }
 
-/* Banner Header */
+h1, h2, h3, h4 {
+  color: #ffd166;
+}
+
+a {
+  color: #ffd166;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+section {
+  padding: 2rem 1rem;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* === HEADER & NAVIGATION === */
+
 .banner-header {
   background-color: #1a1a1a;
   padding: 1rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   z-index: 999;
 }
 
@@ -36,7 +52,11 @@ body {
   }
 }
 
-/* Navigation Bar */
+.banner-logo {
+  max-width: 200px;
+  height: auto;
+}
+
 .main-nav {
   margin-top: 1rem;
   display: flex;
@@ -58,167 +78,15 @@ body {
   border-radius: 5px;
 }
 
+/* === SECTION TITLES === */
 
-/* Global Section Header */
 .section-title {
-  color: #e63946;
+  text-align: center;
   font-size: 2rem;
-  text-align: center;
-  margin-bottom: 1.25rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  position: relative;
-}
-
-.section-title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  margin: 0.5rem auto 0;
-  height: 3px;
-  background: #e63946;
-  border-radius: 5px;
-}
-
-/* === STICKY HEADER FOR DESKTOP === */
-
-.banner-header {
-  background-color: #1a1a1a;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  z-index: 999;
-}
-
-@media (min-width: 768px) {
-  .banner-header {
-    position: sticky;
-    top: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
-  }
-}
-
-@media (max-width: 767px) {
-  .banner-header {
-    position: static;
-  }
-}
-
-/* Hero Section */
-.hero {
-  background: #1e1e1e;
-  text-align: center;
-  padding: 3rem 2rem;
-}
-.hero h1 {
-  font-size: 2.5rem;
-  color: #e63946;
-}
-.hero p {
-  font-size: 1.1rem;
-  margin-top: 1rem;
-}
-button {
-  background: #e63946;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 5px;
-  margin-top: 1.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-}
-button:hover {
-  background: #d62839;
-}
-
-/* Sections */
-section {
-  padding: 2.5rem 1.5rem;
-  max-width: 900px;
-  margin: auto;
-}
-
-ul li {
-  margin: 0.5rem 0;
-}
-
-/* About Section */
-#about .summary {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 2rem;
-}
-
-#about .highlight {
-  font-weight: bold;
-  text-align: center;
+  margin-bottom: 1rem;
   color: #ffd166;
 }
 
-#about .core-values {
-  background: #222;
-  border-left: 5px solid #e63946;
-  padding: 1rem 1.5rem;
-  margin-top: 1rem;
-  border-radius: 5px;
-}
-
-#about .core-values ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-#about .core-values li {
-  margin: 0.5rem 0;
-  position: relative;
-  padding-left: 1.25rem;
-}
-
-#about .core-values li::before {
-  content: "✔️";
-  position: absolute;
-  left: 0;
-  color: #06d6a0;
-}
-
-/* Booking Form */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-input, textarea {
-  padding: 0.75rem;
-  border-radius: 5px;
-  border: none;
-  font-size: 1rem;
-  width: 100%;
-  max-width: 500px;
-}
-
-/* Contact */
-a {
-  color: #e63946;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .main-nav a {
-    display: block;
-    margin: 0.5rem 0;
-  }
-
-  .hero h1 {
-    font-size: 2rem;
-  }
-
-  .banner-logo {
-    max-height: 150px;
-  }
-}
 /* === CAROUSEL STYLES === */
 
 .carousel-section {
@@ -242,93 +110,55 @@ a {
   transition: opacity 0.5s ease-in-out;
 }
 
-.carousel-controls {
-  margin-top: 1rem;
+.carousel-caption {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: #ffd166;
 }
 
-.carousel-controls button {
+/* === BUTTONS === */
+
+a.button, button {
   background: #e63946;
-  color: white;
-  font-size: 1.2rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  margin: 0 0.5rem;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
   border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: background 0.3s ease;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s;
 }
 
-.carousel-controls button:hover {
+a.button:hover, button:hover {
   background: #d62839;
 }
 
-.carousel-caption {
-  color: #fff;
-  margin-top: 0.75rem;
-  font-style: italic;
-  font-size: 1rem;
+.centered-button {
+  text-align: center;
+  margin-top: 1.5rem;
 }
 
-/* === BOOKING PAGE ENHANCEMENTS === */
+/* === BOOKING PAGE === */
 
 iframe {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  margin-bottom: 2rem;
+  border: none;
   width: 100%;
-  height: 600px; /* Default */
+  height: 600px;
+  display: block;
+  margin: auto;
 }
 
 @media (min-width: 768px) {
   iframe {
-    height: 450px; /* Shrink for desktop */
+    height: 450px;
     max-width: 900px;
-    margin: auto;
-    display: block;
   }
 }
 
-form {
-  background-color: #1e1e1e;
-  padding: 2rem;
-  border-radius: 10px;
-  max-width: 600px;
-  margin: auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-form input,
-form textarea {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: none;
-  margin-bottom: 1rem;
-  background: #333;
-  color: #fff;
-}
-
-form textarea {
-  resize: vertical;
-}
-
-form button {
-  background: #e63946;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-form button:hover {
-  background: #d62839;
-}
-/* === WAIVER PAGE STYLES === */
+/* === WAIVER PAGE === */
 
 .waiver-section {
   background: #1a1a1a;
@@ -357,22 +187,7 @@ form button:hover {
   background: #fff;
 }
 
-/* Reuse button style */
-a.button {
-  background: #e63946;
-  color: #fff;
-  padding: 0.75rem 1.5rem;
-  border-radius: 5px;
-  text-decoration: none;
-  display: inline-block;
-  font-weight: bold;
-}
-
-a.button:hover {
-  background: #d62839;
-}
-
-/* === COMMUNITY PAGE STYLES === */
+/* === COMMUNITY PAGE === */
 
 .community-section {
   background: #1a1a1a;
@@ -404,20 +219,7 @@ a.button:hover {
   color: #fff;
 }
 
-.community-section a.button {
-  margin-top: 1rem;
-  display: inline-block;
-}
-.centered-button {
-  text-align: center;
-  margin-top: 1.5rem;
-}
-
-.centered-button .button {
-  display: inline-block;
-}
-
-/* === CONTACT PAGE STYLES === */
+/* === CONTACT PAGE === */
 
 .contact-section {
   background: #1a1a1a;
