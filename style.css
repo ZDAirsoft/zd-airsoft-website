@@ -220,3 +220,10 @@ a {
 .carousel-controls button:hover {
   background: #d62839;
 }
+
+.carousel-caption {
+  color: #fff;
+  margin-top: 0.75rem;
+  font-style: italic;
+  font-size: 1rem;
+}
