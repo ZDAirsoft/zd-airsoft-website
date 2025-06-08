@@ -1,87 +1,93 @@
-/* === GLOBAL RESET & BASE STYLES === */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* === RESET & BASE STYLES === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #121212;
-  color: #eee;
+  background-color: #000;
+  color: #fff;
   line-height: 1.6;
 }
 
-a {
-  color: #ffd166;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-section {
-  padding: 2rem 1rem;
-  max-width: 1000px;
-  margin: auto;
+/* === LOGO BANNER === */
+.banner-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
 /* === HEADER & NAVIGATION === */
-
-.banner-header {
-  background-color: #1a1a1a;
-  padding: 1rem;
+.header {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+.header-inner {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  z-index: 999;
+  padding: 1rem;
 }
 
+/* Hamburger Menu Icon */
+.menu-toggle {
+  display: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #fff;
+}
+
+/* Navigation Links */
+.nav {
+  display: flex;
+  gap: 1rem;
+}
+.nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+}
+.nav a:hover {
+  background: #333;
+  border-radius: 5px;
+}
+
+/* Sticky Header on Desktop */
 @media (min-width: 768px) {
-  .banner-header {
+  .header-inner {
     position: sticky;
     top: 0;
+    background: #000;
     box-shadow: 0 2px 5px rgba(0,0,0,0.6);
   }
 }
 
-.banner-logo {
-  max-width: 200px;
-  height: auto;
+/* === HAMBURGER MENU FOR MOBILE === */
+@media (max-width: 767px) {
+  .menu-toggle { display: block; }
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #000;
+    flex-direction: column;
+    display: none;
+  }
+  .nav.open { display: flex; }
+  .nav a {
+    padding: 1rem;
+    border-top: 1px solid #222;
+  }
 }
 
-.main-nav {
-  margin-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.25rem;
-}
-
-.main-nav a {
-  color: #fff;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  transition: background 0.3s ease;
-}
-
-.main-nav a:hover {
-  background-color: #333;
-  border-radius: 5px;
-}
-
-/* === SECTION TITLES === */
-
+/* === SECTION TITLES & COLORS === */
 .section-title {
   text-align: center;
-  font-size: 2rem;
+  color: #e63946; /* Red headers */
   margin-bottom: 1rem;
-  color: #ffd166;
+  font-size: 2rem;
 }
-
 .section-title::after {
   content: '';
   display: block;
@@ -91,39 +97,48 @@ section {
   margin: 0.5rem auto 0;
   border-radius: 5px;
 }
-
-/* === CAROUSEL STYLES === */
-
-.carousel-section {
-  background: #1a1a1a;
-  text-align: center;
-  padding: 2rem 1rem;
+.highlight-title {
+  color: #ffd166; /* Yellow subheaders */
+  font-weight: bold;
+  margin-top: 2rem;
 }
 
+/* === GLOBAL BUTTONS === */
+a.button, button {
+  background: #e63946;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.3s;
+}
+a.button:hover, button:hover {
+  background: #d62839;
+}
+.centered-button {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+/* === CAROUSEL STYLES === */
+.carousel-section { text-align: center; padding: 2rem 1rem; }
 .carousel-container {
   max-width: 800px;
   margin: auto;
   position: relative;
 }
-
 .carousel-slide {
   display: none;
   width: 100%;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  transition: opacity 0.5s ease;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
 }
-
-.carousel-caption {
-  margin-top: 0.75rem;
-  font-style: italic;
-  color: #ffd166;
-}
-
-.carousel-controls {
-  margin-top: 1rem;
-}
-
+.carousel-caption { margin-top: 0.75rem; font-style: italic; color: #ffd166; }
+.carousel-controls { margin-top: 1rem; }
 .carousel-controls button {
   background: #e63946;
   color: #fff;
@@ -132,96 +147,32 @@ section {
   font-size: 1.2rem;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.carousel-controls button:hover {
-  background: #d62839;
-}
-
-/* === GENERAL BUTTONS === */
-
-a.button, button {
-  background: #e63946;
-  color: #fff;
-  padding: 0.75rem 1.5rem;
-  border-radius: 5px;
-  font-weight: bold;
-  display: inline-block;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-a.button:hover, button:hover {
-  background: #d62839;
-}
-
-.centered-button {
-  text-align: center;
-  margin-top: 1.5rem;
-}
-
-/* === IFRAME BASE STYLES === */
-
+/* === IFRAME STYLES (Booking / Waiver etc.) === */
 iframe {
-  border: none;
   width: 100%;
-  display: block;
-  margin: auto;
+  border: none;
   border-radius: 8px;
+  margin-bottom: 2rem;
 }
+@media (min-width: 768px) { iframe { max-width: 900px; } }
 
-/* === BOOKING PAGE === */
+/* Booking calendar size */
+@media (max-width: 767px) { iframe { height: 600px; } }
+@media (min-width: 768px) { iframe { height: 450px; } }
 
-@media (min-width: 768px) {
-  iframe {
-    height: 450px;
-    max-width: 900px;
-  }
-}
-@media (max-width: 767px) {
-  iframe {
-    height: 600px;
-  }
-}
+/* Waiver form size */
+.waiver-section iframe { height: 1600px; }
+@media (max-width: 768px) { .waiver-section iframe { height: 800px; } }
 
-/* === WAIVER PAGE === */
-
-.waiver-section p {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 1.25rem;
-}
-
-.waiver-section iframe {
-  height: 1600px;
-}
-
-@media (max-width: 768px) {
-  .waiver-section iframe {
-    height: 800px;
-  }
-}
-
-/* === COMMUNITY PAGE === */
-
+/* === COMMUNITY SECTION STYLES === */
 .community-section {
   background: #1a1a1a;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 2rem;
+  padding: 2.5rem 1rem;
   border-radius: 10px;
-  padding-bottom: 2rem;
+  margin-bottom: 2rem;
 }
-
-.highlight-title {
-  color: #ffd166;
-  font-size: 1.25rem;
-  margin-top: 2rem;
-}
-
 .charity-block {
   background: #2a2a2a;
   padding: 1.25rem;
@@ -230,50 +181,30 @@ iframe {
   box-shadow: 0 0 8px rgba(0,0,0,0.4);
 }
 
-/* === CONTACT PAGE === */
-
+/* === CONTACT FORM STYLES === */
 .contact-section {
   background: #1a1a1a;
   padding: 2.5rem 1rem;
-  max-width: 800px;
   border-radius: 10px;
-  font-size: 1.05rem;
-  line-height: 1.7;
+  max-width: 800px;
+  margin: auto;
 }
-
 .contact-section form {
   background: #2a2a2a;
   padding: 2rem;
   border-radius: 8px;
-  margin-top: 2rem;
 }
-
 .contact-section input,
 .contact-section textarea {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  border-radius: 5px;
   border: none;
+  border-radius: 5px;
   background: #333;
   color: #fff;
 }
+.contact-section textarea { resize: vertical; }
 
-.contact-section textarea {
-  resize: vertical;
-}
-
-.contact-section button {
-  background: #e63946;
-  color: #fff;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Honeypot */
-.hidden {
-  display: none;
-}
+/* Prevent honeypot from displaying */
+.hidden { display: none; }
