@@ -85,13 +85,14 @@ body {
 /* === HERO SECTION === */
 .hero {
   background: linear-gradient(to bottom right, #1a1a1a, #000);
-  padding: 4rem 1rem;
+  padding: 4rem 1rem 2rem; /* Shrink bottom padding from 4rem to 2rem */
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 50vh;
 }
+
 
 .hero-content {
   max-width: 800px;
@@ -156,7 +157,7 @@ body {
   border-radius: 10px;
   border: 2px solid #e63946;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-  margin: 2rem 1rem;
+  margin: 1rem 1rem 2rem; /* Reduced top margin */
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
