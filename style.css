@@ -367,3 +367,11 @@ a.button:hover {
   margin-top: 1rem;
   display: inline-block;
 }
+.centered-button {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.centered-button .button {
+  display: inline-block;
+}
