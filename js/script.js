@@ -2,7 +2,9 @@
 console.log("Z&D Airsoft loaded successfully!");
 
 let currentIndex = 0;
-const slides = document.querySelectorAll('.carousel-slide');
+let slides = document.querySelectorAll('.carousel-slide');
+let playing = true;
+let interval = setInterval(nextSlide, 3000);
 
 function showSlide(index) {
   slides.forEach((slide, i) => {
@@ -15,7 +17,21 @@ function nextSlide() {
   showSlide(currentIndex);
 }
 
-// Auto-play
-setInterval(nextSlide, 3000);
-showSlide(currentIndex);
+function prevSlide() {
+  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+  showSlide(currentIndex);
+}
 
+function togglePlay() {
+  const btn = document.getElementById('playPauseBtn');
+  if (playing) {
+    clearInterval(interval);
+    btn.textContent = '▶️';
+  } else {
+    interval = setInterval(nextSlide, 3000);
+    btn.textContent = '⏸️';
+  }
+  playing = !playing;
+}
+
+showSlide(currentIndex);
