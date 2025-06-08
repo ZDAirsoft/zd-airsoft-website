@@ -9,7 +9,12 @@ function showSlide(index) {
   slides.forEach((slide, i) => {
     slide.style.display = i === index ? 'block' : 'none';
   });
+
+  // Update caption
+  const caption = document.getElementById('carouselCaption');
+  caption.textContent = slides[index].alt || '';
 }
+
 
 function nextSlide() {
   currentIndex = (currentIndex + 1) % slides.length;
