@@ -330,3 +330,40 @@ a.button {
 a.button:hover {
   background: #d62839;
 }
+
+/* === COMMUNITY PAGE STYLES === */
+
+.community-section {
+  background: #1a1a1a;
+  padding: 2.5rem 1rem;
+  max-width: 900px;
+  margin: auto;
+  color: #eee;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  border-radius: 10px;
+}
+
+.community-section .highlight-title {
+  margin-top: 2rem;
+  color: #ffd166;
+  font-size: 1.25rem;
+}
+
+.charity-block {
+  background: #2a2a2a;
+  padding: 1.25rem;
+  border-radius: 8px;
+  margin: 1rem 0 2rem;
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
+
+.charity-block h4 {
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.community-section a.button {
+  margin-top: 1rem;
+  display: inline-block;
+}
