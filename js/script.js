@@ -45,3 +45,6 @@ slides.forEach(slide => {
 
 showSlide(currentIndex);
 
+function toggleMenu() {
+  document.getElementById('navMenu').classList.toggle('open');
+}
