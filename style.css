@@ -65,6 +65,32 @@ body {
   border-radius: 5px;
 }
 
+/* === STICKY HEADER FOR DESKTOP === */
+
+.banner-header {
+  background-color: #1a1a1a;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  z-index: 999;
+}
+
+@media (min-width: 768px) {
+  .banner-header {
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+  }
+}
+
+@media (max-width: 767px) {
+  .banner-header {
+    position: static;
+  }
+}
+
 /* Hero Section */
 .hero {
   background: #1e1e1e;
