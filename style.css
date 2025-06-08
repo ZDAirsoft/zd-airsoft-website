@@ -39,7 +39,11 @@ body {
 /* Navigation Links */
 .nav {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center; /* Center navigation links */
+  gap: 1.25rem;
+  width: 100%;
+  text-align: center;
 }
 .nav a {
   color: #fff;
