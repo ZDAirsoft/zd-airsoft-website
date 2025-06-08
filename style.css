@@ -13,36 +13,44 @@ body {
 
 /* Banner Header */
 .banner-header {
-  width: 100%;
-  text-align: center;
-  background-color: #000;
+  background-color: #1a1a1a;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 999;
 }
 
-.banner-logo {
-  width: 100%;
-  height: auto;
-  display: block;
-  max-height: 200px;
-  object-fit: contain;
+@media (min-width: 768px) {
+  .banner-header {
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+  }
 }
 
 /* Navigation Bar */
 .main-nav {
-  background: #222;
-  padding: 0.75rem 0;
-  text-align: center;
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
 }
 
 .main-nav a {
-  margin: 0 1.5rem;
-  color: #eee;
+  color: #fff;
   text-decoration: none;
   font-weight: bold;
-  transition: color 0.3s;
+  padding: 0.5rem 1rem;
+  transition: background 0.3s ease;
 }
+
 .main-nav a:hover {
-  color: #e63946;
+  background-color: #333;
+  border-radius: 5px;
 }
+
 
 /* Global Section Header */
 .section-title {
