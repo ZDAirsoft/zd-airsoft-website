@@ -103,11 +103,6 @@ section {
 ul li {
   margin: 0.5rem 0;
 }
-iframe {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
 
 /* About Section */
 #about .summary {
@@ -236,6 +231,8 @@ a {
 /* === BOOKING PAGE ENHANCEMENTS === */
 
 iframe {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
   margin-bottom: 2rem;
@@ -289,4 +286,42 @@ form button {
 
 form button:hover {
   background: #d62839;
+}
+/* === WAIVER PAGE STYLES === */
+
+.waiver-section {
+  background: #1a1a1a;
+  padding: 2.5rem 1rem;
+  max-width: 900px;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.waiver-section p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #eee;
+  margin-bottom: 1.25rem;
+}
+
+.waiver-section iframe {
+  width: 100%;
+  height: 1000px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  display: block;
+  margin: auto;
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .waiver-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .waiver-section iframe {
+    height: 800px;
+  }
 }
