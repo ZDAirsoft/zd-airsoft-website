@@ -148,6 +148,31 @@ body {
   font-weight: bold;
   margin-top: 2rem;
 }
+
+/* === FRAMED SECTION STYLE === */
+.framed-section {
+  background: #111;
+  padding: 2rem;
+  border-radius: 10px;
+  border: 2px solid #e63946;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+  margin: 2rem 1rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.framed-section p {
+  font-size: 1.1rem;
+  color: #eee;
+  margin: 1rem 0;
+}
+
+.framed-section .section-title {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
 .tagline {
   font-size: 1.2rem;
   font-weight: bold;
