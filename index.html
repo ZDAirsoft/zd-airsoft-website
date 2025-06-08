@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Z&D Airsoft | Mobile Tactical Fun</title>
+  <title>Z&D Airsoft | Tactical Mobile Fun</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,17 +11,17 @@
 <header class="banner-header">
   <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" class="banner-logo" />
   <nav class="main-nav">
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#booking">Book Now</a>
-    <a href="#contact">Contact</a>
+    <a href="index.html">Home</a>
+    <a href="booking.html">Booking</a>
+    <a href="waiver.html">Waiver</a>
+    <a href="community.html">Community</a>
+    <a href="contact.html">Contact</a>
   </nav>
 </header>
 
 <section class="hero">
   <h1>Deploying Fun. Anywhere. Anytime.</h1>
   <p>Veteran-Owned. Fully Self-Sufficient. 100% Tactical Fun.</p>
-  <button onclick="document.getElementById('booking').scrollIntoView({ behavior: 'smooth' })">Book Now</button>
 </section>
 
 <section id="about">
@@ -45,31 +45,13 @@
   </div>
 </section>
 
-<section id="services">
-  <h2 class="section-title">Why Choose Us?</h2>
-  <ul>
-    <li>🎖️ Veteran-Owned & Operated</li>
-    <li>🔌 Silent & Self-Contained Power</li>
-    <li>🎯 Smart Electronic Targets</li>
-    <li>🛡️ No PvP — Skill Drills Only</li>
-    <li>📦 Flexible Pricing for Any Event</li>
-  </ul>
-</section>
-
-<section id="booking">
-  <h2 class="section-title">Booking</h2>
-  <form name="booking" method="POST" data-netlify="true">
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="email" name="email" placeholder="Email Address" required />
-    <textarea name="message" placeholder="Tell us about your event..." required></textarea>
-    <button type="submit">Send Booking Request</button>
-  </form>
-</section>
-
-<section id="contact">
-  <h2 class="section-title">Contact</h2>
-  <p>Email: <a href="mailto:info@zdairsoft.com">info@zdairsoft.com</a></p>
-  <p>Based in Findlay, OH</p>
+<section id="carousel" class="carousel-section">
+ <h2 class="section-title">Gallery</h2>
+ <div class="carousel-container">
+    <img src="images/carousel1.jpg" class="carousel-slide" alt="Event 1" />
+    <img src="images/carousel2.jpg" class="carousel-slide" alt="Event 2" />
+    <img src="images/carousel3.jpg" class="carousel-slide" alt="Event 3" />
+  </div>
 </section>
 
 <script src="js/script.js"></script>
