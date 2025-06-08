@@ -375,3 +375,56 @@ a.button:hover {
 .centered-button .button {
   display: inline-block;
 }
+
+/* === CONTACT PAGE STYLES === */
+
+.contact-section {
+  background: #1a1a1a;
+  padding: 2.5rem 1rem;
+  max-width: 800px;
+  margin: auto;
+  border-radius: 10px;
+  color: #eee;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.contact-section form {
+  margin-top: 2rem;
+  background: #2a2a2a;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.contact-section input,
+.contact-section textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
+}
+
+.contact-section textarea {
+  resize: vertical;
+}
+
+.contact-section button {
+  background: #e63946;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.contact-section button:hover {
+  background: #d62839;
+}
+
+.hidden {
+  display: none;
+}
