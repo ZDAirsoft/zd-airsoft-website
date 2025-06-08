@@ -1,15 +1,17 @@
-/* === GENERAL SITE STYLES === */
+/* === GLOBAL RESET & BASE STYLES === */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #121212;
-  color: #fff;
+  color: #eee;
   line-height: 1.6;
-}
-
-h1, h2, h3, h4 {
-  color: #ffd166;
 }
 
 a {
@@ -46,12 +48,6 @@ section {
   }
 }
 
-@media (max-width: 767px) {
-  .banner-header {
-    position: static;
-  }
-}
-
 .banner-logo {
   max-width: 200px;
   height: auto;
@@ -67,7 +63,6 @@ section {
 
 .main-nav a {
   color: #fff;
-  text-decoration: none;
   font-weight: bold;
   padding: 0.5rem 1rem;
   transition: background 0.3s ease;
@@ -87,12 +82,22 @@ section {
   color: #ffd166;
 }
 
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #e63946;
+  margin: 0.5rem auto 0;
+  border-radius: 5px;
+}
+
 /* === CAROUSEL STYLES === */
 
 .carousel-section {
   background: #1a1a1a;
-  padding: 2rem 1rem;
   text-align: center;
+  padding: 2rem 1rem;
 }
 
 .carousel-container {
@@ -104,31 +109,49 @@ section {
 .carousel-slide {
   display: none;
   width: 100%;
-  height: auto;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  transition: opacity 0.5s ease-in-out;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  transition: opacity 0.5s ease;
 }
 
 .carousel-caption {
   margin-top: 0.75rem;
-  font-size: 1rem;
+  font-style: italic;
   color: #ffd166;
 }
 
-/* === BUTTONS === */
+.carousel-controls {
+  margin-top: 1rem;
+}
+
+.carousel-controls button {
+  background: #e63946;
+  color: #fff;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.carousel-controls button:hover {
+  background: #d62839;
+}
+
+/* === GENERAL BUTTONS === */
 
 a.button, button {
   background: #e63946;
   color: #fff;
   padding: 0.75rem 1.5rem;
   border-radius: 5px;
-  text-decoration: none;
   font-weight: bold;
   display: inline-block;
-  transition: background 0.3s ease;
   border: none;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 a.button:hover, button:hover {
@@ -140,16 +163,17 @@ a.button:hover, button:hover {
   margin-top: 1.5rem;
 }
 
-/* === BOOKING PAGE === */
+/* === IFRAME BASE STYLES === */
 
 iframe {
-  border-radius: 8px;
   border: none;
   width: 100%;
-  height: 600px;
   display: block;
   margin: auto;
+  border-radius: 8px;
 }
+
+/* === BOOKING PAGE === */
 
 @media (min-width: 768px) {
   iframe {
@@ -157,66 +181,53 @@ iframe {
     max-width: 900px;
   }
 }
+@media (max-width: 767px) {
+  iframe {
+    height: 600px;
+  }
+}
 
 /* === WAIVER PAGE === */
-
-.waiver-section {
-  background: #1a1a1a;
-  padding: 2.5rem 1rem;
-  max-width: 900px;
-  margin: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
 
 .waiver-section p {
   font-size: 1.05rem;
   line-height: 1.7;
-  color: #eee;
   margin-bottom: 1.25rem;
 }
 
 .waiver-section iframe {
-  width: 100%;
   height: 1600px;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-  display: block;
-  margin: auto;
-  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .waiver-section iframe {
+    height: 800px;
+  }
 }
 
 /* === COMMUNITY PAGE === */
 
 .community-section {
   background: #1a1a1a;
-  padding: 2.5rem 1rem;
-  max-width: 900px;
-  margin: auto;
-  color: #eee;
   font-size: 1.05rem;
   line-height: 1.7;
+  margin-bottom: 2rem;
   border-radius: 10px;
+  padding-bottom: 2rem;
 }
 
-.community-section .highlight-title {
-  margin-top: 2rem;
+.highlight-title {
   color: #ffd166;
   font-size: 1.25rem;
+  margin-top: 2rem;
 }
 
 .charity-block {
   background: #2a2a2a;
   padding: 1.25rem;
+  margin: 1rem 0;
   border-radius: 8px;
-  margin: 1rem 0 2rem;
   box-shadow: 0 0 8px rgba(0,0,0,0.4);
-}
-
-.charity-block h4 {
-  margin-bottom: 0.5rem;
-  color: #fff;
 }
 
 /* === CONTACT PAGE === */
@@ -225,18 +236,16 @@ iframe {
   background: #1a1a1a;
   padding: 2.5rem 1rem;
   max-width: 800px;
-  margin: auto;
   border-radius: 10px;
-  color: #eee;
   font-size: 1.05rem;
   line-height: 1.7;
 }
 
 .contact-section form {
-  margin-top: 2rem;
   background: #2a2a2a;
   padding: 2rem;
   border-radius: 8px;
+  margin-top: 2rem;
 }
 
 .contact-section input,
@@ -244,8 +253,8 @@ iframe {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  border: none;
   border-radius: 5px;
+  border: none;
   background: #333;
   color: #fff;
 }
@@ -256,7 +265,7 @@ iframe {
 
 .contact-section button {
   background: #e63946;
-  color: white;
+  color: #fff;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   border: none;
@@ -264,10 +273,7 @@ iframe {
   cursor: pointer;
 }
 
-.contact-section button:hover {
-  background: #d62839;
-}
-
+/* Honeypot */
 .hidden {
   display: none;
 }
