@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us | Z&D Airsoft</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="banner-header">
+  <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" class="banner-logo" />
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="booking.html">Booking</a>
+    <a href="waiver.html">Waiver</a>
+    <a href="community.html">Community</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section class="contact-section">
+  <h2 class="section-title">Let’s Talk!</h2>
+  <p>
+    Whether you're booking a party, planning a public event, or just have questions, we'd love to hear from you.
+    Fill out the form below and we'll be in touch soon.
+  </p>
+
+  <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="contact" />
+    <p class="hidden">
+      <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+    </p>
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Your Email" required />
+    <input type="text" name="subject" placeholder="Subject" />
+    <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+</section>
+
+</body>
+</html>
