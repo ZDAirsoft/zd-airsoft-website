@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking | Z&D Airsoft</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="banner-header">
+  <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" class="banner-logo" />
+  <nav class="main-nav">
+    <a href="index.html">Home</a>
+    <a href="booking.html">Booking</a>
+    <a href="waiver.html">Waiver</a>
+    <a href="community.html">Community</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section>
+  <h2 class="section-title">Check Our Availability</h2>
+  <div style="max-width: 900px; margin: auto;">
+    <!-- Replace YOUR_CALENDAR_ID with your real Google Calendar ID -->
+    <iframe 
+      src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID&ctz=America%2FNew_York"
+      style="border: 0" 
+      width="100%" 
+      height="600" 
+      frameborder="0" 
+      scrolling="no">
+    </iframe>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">Request a Booking</h2>
+  <form name="booking" method="POST" data-netlify="true">
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Email Address" required />
+    <input type="text" name="event-type" placeholder="Event Type (e.g. Birthday, School, Festival)" required />
+    <textarea name="details" placeholder="Tell us about your event!" rows="6" required></textarea>
+    <button type="submit">Send Booking Request</button>
+  </form>
+</section>
+
+</body>
+</html>
