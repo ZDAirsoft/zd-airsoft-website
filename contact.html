@@ -22,12 +22,11 @@
   </div>
 </header>
 
-
-<section class="contact-section">
+<section class="framed-section contact-section">
   <h2 class="section-title">Let’s Talk!</h2>
+  <p class="tagline">Booking questions, partnerships, or just saying hi? We’re here for it.</p>
   <p>
-    Whether you're booking a party, planning a public event, or just have questions, we'd love to hear from you.
-    Fill out the form below and we'll be in touch soon.
+    Whether you're planning a private party, public event, or fundraiser — we’d love to hear from you. Fill out the form below and we'll get back to you shortly.
   </p>
 
   <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
@@ -39,9 +38,12 @@
     <input type="email" name="email" placeholder="Your Email" required />
     <input type="text" name="subject" placeholder="Subject" />
     <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
-    <button type="submit">Send Message</button>
+    <div class="centered-button">
+      <button type="submit">📨 Send Message</button>
+    </div>
   </form>
 </section>
 
+<script src="js/script.js"></script>
 </body>
 </html>
