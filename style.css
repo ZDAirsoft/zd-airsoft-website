@@ -178,3 +178,25 @@ a {
     max-height: 150px;
   }
 }
+/* === CAROUSEL STYLES === */
+
+.carousel-section {
+  background: #1a1a1a;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.carousel-container {
+  max-width: 800px;
+  margin: auto;
+  position: relative;
+}
+
+.carousel-slide {
+  display: none;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.5s ease-in-out;
+}
