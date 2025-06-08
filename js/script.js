@@ -1,6 +1,5 @@
 // Add interactivity here if needed
 console.log("Z&D Airsoft loaded successfully!");
-
 let currentIndex = 0;
 let slides = document.querySelectorAll('.carousel-slide');
 let playing = true;
@@ -34,4 +33,10 @@ function togglePlay() {
   playing = !playing;
 }
 
+// 🔥 NEW: Click image to toggle play/pause
+slides.forEach(slide => {
+  slide.addEventListener('click', togglePlay);
+});
+
 showSlide(currentIndex);
+
