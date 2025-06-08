@@ -82,6 +82,52 @@ body {
 }
 
 /* === SECTION TITLES & COLORS === */
+/* === HERO SECTION === */
+.hero {
+  background: linear-gradient(to bottom right, #1a1a1a, #000);
+  padding: 4rem 1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.hero-content {
+  max-width: 800px;
+  background: #111;
+  border: 2px solid #e63946;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #e63946; /* Red */
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.hero .button {
+  background: #ffd166;
+  color: #000;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.hero .button:hover {
+  background: #f4c430;
+}
+
+
+/* === Other sections === */
+
 .section-title {
   text-align: center;
   color: #e63946; /* Red headers */
