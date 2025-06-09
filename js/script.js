@@ -48,3 +48,18 @@ showSlide(currentIndex);
 function toggleMenu() {
   document.getElementById('navMenu').classList.toggle('open');
 }
+
+// Show/hide back to top button
+window.onscroll = function () {
+  const topBtn = document.getElementById("backToTop");
+  if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+    topBtn.style.display = "block";
+  } else {
+    topBtn.style.display = "none";
+  }
+};
+
+// Scroll to top when clicked
+document.getElementById("backToTop").addEventListener("click", function () {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
