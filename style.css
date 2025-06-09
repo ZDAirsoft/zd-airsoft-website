@@ -154,6 +154,28 @@ body {
   margin-top: 2rem;
 }
 
+/* === Upcoming Events === */
+.event-block {
+  background-color: #1e1e1e;
+  border: 2px solid #ff0000;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 800px;
+  color: white;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.event-block h3 {
+  color: #ffd166;
+  margin-bottom: 0.5rem;
+}
+
+.event-block p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+}
+
 /* === FRAMED SECTION STYLE === */
 .framed-section {
   background: #111;
