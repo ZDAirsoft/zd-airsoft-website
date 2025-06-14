@@ -153,6 +153,18 @@ body {
   font-weight: bold;
   margin-top: 2rem;
 }
+.highlight-box {
+  background-color: #222;
+  border: 2px solid #ff0000;
+  padding: 1rem;
+  margin: 1rem auto;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  color: white;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+}
+
 
 /* === Upcoming Events === */
 .event-block {
