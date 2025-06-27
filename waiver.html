@@ -92,5 +92,19 @@
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 <script src="js/script.js"></script>
+  <script>
+  function toggleFBPanel() {
+    const panel = document.getElementById("fbFeedPanel");
+    panel.classList.toggle("visible");
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("fbToggle");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", toggleFBPanel);
+    }
+  });
+</script>
+
 </body>
 </html>
