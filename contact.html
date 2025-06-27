@@ -60,7 +60,34 @@
     </nav>
   </div>
 </footer>
-  
+    <!-- Floating Facebook Icon -->
+<button id="fbToggle" title="Follow us on Facebook">📘</button>
+
+<!-- Slide-in Facebook Feed Panel -->
+<div id="fbFeedPanel">
+  <div class="fb-header">
+    <span>Follow Us on Facebook</span>
+    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
+  </div>
+  <div class="fb-page"
+    data-href="https://www.facebook.com/zdairsoft"
+    data-tabs="timeline"
+    data-width=""
+    data-height="500"
+    data-small-header="false"
+    data-adapt-container-width="true"
+    data-hide-cover="false"
+    data-show-facepile="true">
+    <blockquote cite="https://www.facebook.com/zdairsoft" class="fb-xfbml-parse-ignore">
+      <a href="https://www.facebook.com/zdairsoft">Z&D Airsoft</a>
+    </blockquote>
+  </div>
+</div>
+
+<!-- Facebook SDK Loader -->
+<div id="fb-root"></div>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 <script src="js/script.js"></script>
 </body>
 </html>
