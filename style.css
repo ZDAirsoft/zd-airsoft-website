@@ -432,16 +432,25 @@ form button:hover {
   position: fixed;
   bottom: 90px;
   right: 20px;
-  background-color: #1877f2;
-  color: white;
+  background-color: transparent;
   border: none;
-  padding: 10px 14px;
-  border-radius: 50%;
-  font-size: 1.4rem;
+  padding: 0;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
   z-index: 1000;
 }
+
+#fbToggle .fb-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+#fbToggle:hover .fb-icon {
+  transform: scale(1.1);
+}
+
 
 /* Facebook Panel */
 #fbFeedPanel {
