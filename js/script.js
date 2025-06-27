@@ -63,3 +63,11 @@ window.onscroll = function () {
 document.getElementById("backToTop").addEventListener("click", function () {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+
+// Facebook Button
+function toggleFBPanel() {
+  const panel = document.getElementById("fbFeedPanel");
+  panel.classList.toggle("visible");
+}
+
+document.getElementById("fbToggle").addEventListener("click", toggleFBPanel);
