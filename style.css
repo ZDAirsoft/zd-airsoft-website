@@ -426,3 +426,60 @@ form button:hover {
 
 /* Prevent honeypot from displaying */
 .hidden { display: none; }
+
+/* Floating Facebook Button */
+#fbToggle {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+/* Facebook Panel */
+#fbFeedPanel {
+  position: fixed;
+  bottom: 120px;
+  right: -380px; /* Start off-screen */
+  width: 340px;
+  max-height: 600px;
+  background-color: #1e1e1e;
+  border: 2px solid #1877f2;
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 999;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  overflow: auto;
+  transition: right 0.4s ease;
+}
+
+/* Visible Slide-in */
+#fbFeedPanel.visible {
+  right: 20px;
+}
+
+/* Panel Header */
+.fb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: none;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
