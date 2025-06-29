@@ -24,7 +24,7 @@
   </div>
 </header>
 
-<!-- MOBILE OPEN LINK -->
+<!-- Top Full Page Button for Mobile -->
 <section class="framed-section mobile-only">
   <h3 class="section-title">Prefer a larger view?</h3>
   <p class="tagline">Tap to open the waiver in a new tab</p>
@@ -35,22 +35,27 @@
   </div>
 </section>
 
+<!-- Embed for ALL Devices -->
 <section class="framed-section waiver-section">
   <h2 class="section-title">Electronic Liability Waiver</h2>
   <p class="tagline">Required for all participants before any activity begins</p>
   <p>All participants must complete this waiver form before engaging in any Z&D Airsoft activities.</p>
   <p>Parents or guardians must complete the form for participants under 18 years of age.</p>
 
-  <div class="form-container desktop-only">
+  <div class="form-container">
     <iframe 
       src="https://docs.google.com/forms/d/e/1FAIpQLSeisQb5cUYugzIz3q9fyH4Ty4FVN5lTptx4dHPzOpirIndW0g/viewform?embedded=true" 
-      allowfullscreen>
+      width="100%" 
+      height="1200" 
+      frameborder="0" 
+      marginheight="0" 
+      marginwidth="0">
       Loading…
     </iframe>
   </div>
 </section>
 
-<!-- DESKTOP OPEN LINK -->
+<!-- Bottom Full Page Button for Desktop/Tablet -->
 <section class="framed-section desktop-only">
   <h3 class="section-title" style="font-size: 1.5rem;">Prefer a larger view?</h3>
   <p class="tagline">You can open the full waiver form in a new tab</p>
@@ -102,7 +107,7 @@
   </div>
 </div>
 
-<!-- Facebook SDK Loader -->
+<!-- Facebook SDK -->
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 <script src="js/script.js"></script>
@@ -118,7 +123,6 @@
       toggleBtn.addEventListener("click", toggleFBPanel);
     }
 
-    // Collapse mobile nav on link click
     const navLinks = document.querySelectorAll('#navMenu a');
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
