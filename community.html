@@ -106,10 +106,9 @@
 
 <!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
-<div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
-<script src="js/script.js"></script>
-  <script>
+
+<script>
   function toggleFBPanel() {
     const panel = document.getElementById("fbFeedPanel");
     panel.classList.toggle("visible");
@@ -120,7 +119,20 @@
     if (toggleBtn) {
       toggleBtn.addEventListener("click", toggleFBPanel);
     }
+
+    // Collapse mobile nav on link click
+    const navLinks = document.querySelectorAll('#navMenu a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById("navMenu").classList.remove("active");
+      });
+    });
   });
+
+  function toggleMenu() {
+    const nav = document.getElementById("navMenu");
+    nav.classList.toggle("active");
+  }
 </script>
 
 </body>
