@@ -78,12 +78,27 @@ body {
     flex-direction: column;
     display: none;
   }
-  .nav.open { display: flex; }
-  .nav a {
+ .nav {
+    display: none;
+    flex-direction: column;
+    background-color: #000;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
     padding: 1rem;
-    border-top: 1px solid #222;
+    z-index: 999;
+  }
+
+  .nav.active {
+    display: flex;
+  }
+
+  .nav a {
+    margin: 0.5rem 0;
   }
 }
+
 
 /* === SECTION TITLES & COLORS === */
 /* === HERO SECTION === */
