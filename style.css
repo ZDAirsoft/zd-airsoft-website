@@ -331,6 +331,29 @@ iframe {
 /* Waiver form size */
 .waiver-section iframe { height: 1600px; }
 @media (max-width: 768px) { .waiver-section iframe { height: 800px; } }
+.open-form-link {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
+
 
 /* === COMMUNITY SECTION STYLES === */
 .community-section {
