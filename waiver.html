@@ -14,7 +14,6 @@
     <div class="menu-toggle" onclick="toggleMenu()">☰</div>
     <nav class="nav" id="navMenu">
       <a href="index.html">Home</a>
-      <a href="about.html">About</a>
       <a href="event-calendar.html">Booking</a>
       <a href="waiver.html">Waiver</a>
       <a href="community.html">Community</a>
@@ -24,27 +23,32 @@
   </div>
 </header>
 
-<section class="framed-section waiver-section">
+<section class="waiver-section">
   <h2 class="section-title">Electronic Liability Waiver</h2>
-  <p class="tagline">Required for all participants before any activity begins</p>
-  <p>All participants must complete this waiver form before engaging in any Z&D Airsoft activities.</p>
-  <p>Parents or guardians must complete the form for participants under 18 years of age.</p>
+
+  <!-- MOBILE VERSION of the link -->
+  <p class="open-form-link mobile-only">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeisQb5cUYugzIz3q9fyH4Ty4FVN5lTptx4dHPzOpirIndW0g/viewform" target="_blank" class="button">
+      📄 Open Full Page Form
+    </a>
+  </p>
+
+  <p>
+    All participants must complete this waiver form before engaging in any Z&D Airsoft activities. Parents or guardians must complete the form for participants under 18 years of age.
+  </p>
 
   <iframe 
     src="https://docs.google.com/forms/d/e/1FAIpQLSeisQb5cUYugzIz3q9fyH4Ty4FVN5lTptx4dHPzOpirIndW0g/viewform?embedded=true" 
     allowfullscreen>
     Loading…
   </iframe>
-</section>
 
-<section class="framed-section">
-  <h3 class="section-title" style="font-size: 1.5rem;">Prefer a larger view?</h3>
-  <p class="tagline">You can open the full waiver form in a new tab</p>
-  <div class="centered-button">
+  <!-- DESKTOP VERSION of the link -->
+  <p class="open-form-link desktop-only">
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSeisQb5cUYugzIz3q9fyH4Ty4FVN5lTptx4dHPzOpirIndW0g/viewform" target="_blank" class="button">
       📄 Open Full Page Form
     </a>
-  </div>
+  </p>
 </section>
 
 <footer class="site-footer">
@@ -61,31 +65,6 @@
     </nav>
   </div>
 </footer>
-    <!-- Floating Facebook Icon -->
-<button id="fbToggle" title="Follow us on Facebook">
-  <img src="images/fblogo.png" alt="Facebook Icon" class="fb-icon" />
-</button>
-
-<!-- Slide-in Facebook Feed Panel -->
-<div id="fbFeedPanel">
-  <div class="fb-header">
-    <span>Follow Us on Facebook</span>
-    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
-  </div>
-  <div class="fb-page"
-    data-href="https://www.facebook.com/zdairsoft"
-    data-tabs="timeline"
-    data-width=""
-    data-height="500"
-    data-small-header="false"
-    data-adapt-container-width="true"
-    data-hide-cover="false"
-    data-show-facepile="true">
-    <blockquote cite="https://www.facebook.com/zdairsoft" class="fb-xfbml-parse-ignore">
-      <a href="https://www.facebook.com/zdairsoft">Z&D Airsoft</a>
-    </blockquote>
-  </div>
-</div>
 
 <!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
@@ -103,7 +82,6 @@
       toggleBtn.addEventListener("click", toggleFBPanel);
     }
 
-    // Collapse mobile nav on link click
     const navLinks = document.querySelectorAll('#navMenu a');
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
