@@ -1,34 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Z&D Airsoft loaded successfully!");
 
-  // === Carousel Setup ===
+  // ==== Carousel Functionality ====
   let currentIndex = 0;
-  const slides = document.querySelectorAll('.carousel-slide');
-  const caption = document.getElementById('carouselCaption');
-  const playPauseBtn = document.getElementById('playPauseBtn');
+  const slides = document.querySelectorAll(".carousel-slide");
+  const caption = document.getElementById("carouselCaption");
+  const playPauseBtn = document.getElementById("playPauseBtn");
   let playing = true;
   let interval;
 
-  if (slides.length > 0 && caption) {
-    showSlide(currentIndex);
-    interval = setInterval(nextSlide, 3000);
-
-    slides.forEach(slide => slide.addEventListener('click', togglePlay));
-
-    const prevBtn = document.querySelector('button[onclick="prevSlide()"]');
-    const nextBtn = document.querySelector('button[onclick="nextSlide()"]');
-    const toggleBtn = document.querySelector('button[onclick="togglePlay()"]');
-
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-    if (toggleBtn) toggleBtn.addEventListener('click', togglePlay);
-  }
-
   function showSlide(index) {
     slides.forEach((slide, i) => {
-      slide.style.display = i === index ? 'block' : 'none';
+      slide.style.display = i === index ? "block" : "none";
     });
-    caption.textContent = slides[index]?.alt || '';
+    caption.textContent = slides[index]?.alt || "";
   }
 
   function nextSlide() {
@@ -42,40 +27,55 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function togglePlay() {
-    if (!playPauseBtn) return;
     if (playing) {
       clearInterval(interval);
-      playPauseBtn.textContent = '▶️';
+      playPauseBtn.textContent = "▶️";
     } else {
       interval = setInterval(nextSlide, 3000);
-      playPauseBtn.textContent = '⏸️';
+      playPauseBtn.textContent = "⏸️";
     }
     playing = !playing;
   }
 
-  // === Hamburger Menu Toggle ===
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navMenu = document.getElementById('navMenu');
-  if (menuToggle && navMenu) {
-    menuToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('active');
-    });
-
-    // Auto-close menu on link click
-    const navLinks = navMenu.querySelectorAll('a');
-    navLinks.forEach(link =>
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-      })
-    );
+  if (slides.length > 0) {
+    showSlide(currentIndex);
+    interval = setInterval(nextSlide, 3000);
+    slides.forEach(slide => slide.addEventListener("click", togglePlay));
   }
 
-  // === Facebook Slideout Toggle ===
+  document.querySelector(".carousel-controls button:nth-child(1)").onclick = prevSlide;
+  document.querySelector(".carousel-controls button:nth-child(2)").onclick = togglePlay;
+  document.querySelector(".carousel-controls button:nth-child(3)").onclick = nextSlide;
+
+  // ==== Hamburger Menu ====
+  const menuToggle = document.querySelector(".menu-toggle");
+  const navMenu = document.getElementById("navMenu");
+
+  menuToggle.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+  });
+
+  // Collapse nav on link click
+  navMenu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      navMenu.classList.remove("active");
+    });
+  });
+
+  // ==== Facebook Panel ====
   const fbToggle = document.getElementById("fbToggle");
   const fbPanel = document.getElementById("fbFeedPanel");
+
   if (fbToggle && fbPanel) {
     fbToggle.addEventListener("click", () => {
       fbPanel.classList.toggle("visible");
     });
+
+    const closeBtn = fbPanel.querySelector(".close-btn");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        fbPanel.classList.remove("visible");
+      });
+    }
   }
 });
