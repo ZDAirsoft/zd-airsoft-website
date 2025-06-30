@@ -176,5 +176,21 @@
   }
 </script>
 <script src="js/script.js"></script>
+
+  <!-- FB Button & Panel -->
+<button id="fbTestBtn">Test FB</button>
+<div id="fbTestPanel" style="display:none; position:fixed; bottom:50px; right:20px; background:#fff; padding:10px;">
+  Hello FB Panel!
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("fbTestBtn");
+    btn.addEventListener("click", () => {
+      const panel = document.getElementById("fbTestPanel");
+      panel.style.display = (panel.style.display === "none") ? "block" : "none";
+    });
+  });
+</script>
 </body>
 </html>
