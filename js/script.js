@@ -1,48 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Z&D Airsoft loaded successfully!");
 
-  // Carousel
+  // === Carousel Setup ===
   let currentIndex = 0;
-  let slides = document.querySelectorAll('.carousel-slide');
-  let caption = document.getElementById('carouselCaption');
-  let btn = document.getElementById('playPauseBtn');
+  const slides = document.querySelectorAll('.carousel-slide');
+  const caption = document.getElementById('carouselCaption');
+  const playPauseBtn = document.getElementById('playPauseBtn');
   let playing = true;
+  let interval;
 
   if (slides.length > 0 && caption) {
     showSlide(currentIndex);
-    let interval = setInterval(nextSlide, 3000);
+    interval = setInterval(nextSlide, 3000);
 
     slides.forEach(slide => slide.addEventListener('click', togglePlay));
-
-    function showSlide(index) {
-      slides.forEach((slide, i) => {
-        slide.style.display = i === index ? 'block' : 'none';
-      });
-      caption.textContent = slides[index]?.alt || '';
-    }
-
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % slides.length;
-      showSlide(currentIndex);
-    }
-
-    function prevSlide() {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      showSlide(currentIndex);
-    }
-
-    function togglePlay() {
-      if (btn) {
-        if (playing) {
-          clearInterval(interval);
-          btn.textContent = '▶️';
-        } else {
-          interval = setInterval(nextSlide, 3000);
-          btn.textContent = '⏸️';
-        }
-        playing = !playing;
-      }
-    }
 
     const prevBtn = document.querySelector('button[onclick="prevSlide()"]');
     const nextBtn = document.querySelector('button[onclick="nextSlide()"]');
@@ -53,26 +24,53 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleBtn) toggleBtn.addEventListener('click', togglePlay);
   }
 
-  // Hamburger menu
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.style.display = i === index ? 'block' : 'none';
+    });
+    caption.textContent = slides[index]?.alt || '';
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % slides.length;
+    showSlide(currentIndex);
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(currentIndex);
+  }
+
+  function togglePlay() {
+    if (!playPauseBtn) return;
+    if (playing) {
+      clearInterval(interval);
+      playPauseBtn.textContent = '▶️';
+    } else {
+      interval = setInterval(nextSlide, 3000);
+      playPauseBtn.textContent = '⏸️';
+    }
+    playing = !playing;
+  }
+
+  // === Hamburger Menu Toggle ===
   const menuToggle = document.querySelector('.menu-toggle');
-  if (menuToggle) {
+  const navMenu = document.getElementById('navMenu');
+  if (menuToggle && navMenu) {
     menuToggle.addEventListener('click', () => {
-      document.getElementById('navMenu').classList.toggle('active');
+      navMenu.classList.toggle('active');
     });
+
+    // Auto-close menu on link click
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(link =>
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+      })
+    );
   }
 
-  // Back to top
-  const topBtn = document.getElementById("backToTop");
-  if (topBtn) {
-    window.addEventListener('scroll', () => {
-      topBtn.style.display = window.scrollY > 300 ? "block" : "none";
-    });
-    topBtn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
-
-  // Facebook Panel
+  // === Facebook Slideout Toggle ===
   const fbToggle = document.getElementById("fbToggle");
   const fbPanel = document.getElementById("fbFeedPanel");
   if (fbToggle && fbPanel) {
