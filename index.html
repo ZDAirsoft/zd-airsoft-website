@@ -119,8 +119,37 @@
   </div>
 </footer>
 
+<!-- Facebook SDK Loader -->
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
+
+<!-- Scripts -->
 <script src="js/script.js"></script>
-  <!-- Floating Facebook Icon -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("fbToggle");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", function () {
+        const panel = document.getElementById("fbFeedPanel");
+        panel.classList.toggle("visible");
+      });
+    }
+
+    const navLinks = document.querySelectorAll('#navMenu a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById("navMenu").classList.remove("active");
+      });
+    });
+  });
+
+  function toggleMenu() {
+    const nav = document.getElementById("navMenu");
+    nav.classList.toggle("active");
+  }
+</script>
+
+<!-- Floating Facebook Icon -->
 <button id="fbToggle" title="Follow us on Facebook">
   <img src="images/fblogo.png" alt="Facebook Icon" class="fb-icon" />
 </button>
@@ -129,7 +158,7 @@
 <div id="fbFeedPanel">
   <div class="fb-header">
     <span>Follow Us on Facebook</span>
-    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
+    <button onclick="document.getElementById('fbFeedPanel').classList.toggle('visible')" class="close-btn">✖</button>
   </div>
   <div class="fb-page"
     data-href="https://www.facebook.com/zdairsoft"
@@ -145,38 +174,6 @@
     </blockquote>
   </div>
 </div>
-
-<!-- Facebook SDK Loader -->
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
-
-<script>
-  function toggleFBPanel() {
-    const panel = document.getElementById("fbFeedPanel");
-    panel.classList.toggle("visible");
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("fbToggle");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", toggleFBPanel);
-    }
-
-    // Collapse mobile nav on link click
-    const navLinks = document.querySelectorAll('#navMenu a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        document.getElementById("navMenu").classList.remove("active");
-      });
-    });
-  });
-
-  function toggleMenu() {
-    const nav = document.getElementById("navMenu");
-    nav.classList.toggle("active");
-  }
-</script>
-
 
 </body>
 </html>
