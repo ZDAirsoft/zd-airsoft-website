@@ -1,69 +1,83 @@
-// Load interactivity after DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Z&D Airsoft loaded successfully!");
 
-  // Carousel Setup
+  // Carousel
   let currentIndex = 0;
   let slides = document.querySelectorAll('.carousel-slide');
+  let caption = document.getElementById('carouselCaption');
+  let btn = document.getElementById('playPauseBtn');
   let playing = true;
-  const caption = document.getElementById('carouselCaption');
-  const btn = document.getElementById('playPauseBtn');
 
-  if (slides.length > 0) {
+  if (slides.length > 0 && caption) {
     showSlide(currentIndex);
-    var interval = setInterval(nextSlide, 3000);
+    let interval = setInterval(nextSlide, 3000);
 
-    slides.forEach(slide => {
-      slide.addEventListener('click', togglePlay);
-    });
-  }
+    slides.forEach(slide => slide.addEventListener('click', togglePlay));
 
-  function showSlide(index) {
-    slides.forEach((slide, i) => {
-      slide.style.display = i === index ? 'block' : 'none';
-    });
-    caption.textContent = slides[index]?.alt || '';
-  }
-
-  function nextSlide() {
-    currentIndex = (currentIndex + 1) % slides.length;
-    showSlide(currentIndex);
-  }
-
-  function prevSlide() {
-    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-    showSlide(currentIndex);
-  }
-
-  function togglePlay() {
-    if (playing) {
-      clearInterval(interval);
-      btn.textContent = '▶️';
-    } else {
-      interval = setInterval(nextSlide, 3000);
-      btn.textContent = '⏸️';
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.style.display = i === index ? 'block' : 'none';
+      });
+      caption.textContent = slides[index]?.alt || '';
     }
-    playing = !playing;
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    function togglePlay() {
+      if (btn) {
+        if (playing) {
+          clearInterval(interval);
+          btn.textContent = '▶️';
+        } else {
+          interval = setInterval(nextSlide, 3000);
+          btn.textContent = '⏸️';
+        }
+        playing = !playing;
+      }
+    }
+
+    const prevBtn = document.querySelector('button[onclick="prevSlide()"]');
+    const nextBtn = document.querySelector('button[onclick="nextSlide()"]');
+    const toggleBtn = document.querySelector('button[onclick="togglePlay()"]');
+
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (toggleBtn) toggleBtn.addEventListener('click', togglePlay);
   }
 
-  // Navigation Menu toggle — ensure CSS expects 'active', not 'open'
-  document.querySelector('.menu-toggle').addEventListener('click', () => {
-    document.getElementById('navMenu').classList.toggle('active');
-  });
+  // Hamburger menu
+  const menuToggle = document.querySelector('.menu-toggle');
+  if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+      document.getElementById('navMenu').classList.toggle('active');
+    });
+  }
 
-  // Smooth Back-to-top button
+  // Back to top
   const topBtn = document.getElementById("backToTop");
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) topBtn.style.display = "block";
-    else topBtn.style.display = "none";
-  });
-  topBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  if (topBtn) {
+    window.addEventListener('scroll', () => {
+      topBtn.style.display = window.scrollY > 300 ? "block" : "none";
+    });
+    topBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
-  // Facebook toggle
-  document.getElementById("fbToggle").addEventListener("click", () => {
-    document.getElementById("fbFeedPanel").classList.toggle("visible");
-  });
-
-}); // DOMContentLoaded end
+  // Facebook Panel
+  const fbToggle = document.getElementById("fbToggle");
+  const fbPanel = document.getElementById("fbFeedPanel");
+  if (fbToggle && fbPanel) {
+    fbToggle.addEventListener("click", () => {
+      fbPanel.classList.toggle("visible");
+    });
+  }
+});
