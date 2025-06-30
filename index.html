@@ -146,7 +146,8 @@
 </div>
 
 <!-- Facebook SDK Loader -->
-<div id="fb-root"></div>
+<script src="js/script.js"></script>
+  <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 
 <script>
@@ -175,22 +176,7 @@
     nav.classList.toggle("active");
   }
 </script>
-<script src="js/script.js"></script>
 
-  <!-- FB Button & Panel -->
-<button id="fbTestBtn">Test FB</button>
-<div id="fbTestPanel" style="display:none; position:fixed; bottom:50px; right:20px; background:#fff; padding:10px;">
-  Hello FB Panel!
-</div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("fbTestBtn");
-    btn.addEventListener("click", () => {
-      const panel = document.getElementById("fbTestPanel");
-      panel.style.display = (panel.style.display === "none") ? "block" : "none";
-    });
-  });
-</script>
 </body>
 </html>
