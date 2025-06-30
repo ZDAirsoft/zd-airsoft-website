@@ -117,7 +117,7 @@
   </div>
 </footer>
 
-  <!-- Floating Facebook Icon -->
+<!-- Floating Facebook Icon -->
 <button id="fbToggle" title="Follow us on Facebook">
   <img src="images/fblogo.png" alt="Facebook Icon" class="fb-icon" />
 </button>
@@ -143,12 +143,10 @@
   </div>
 </div>
 
-<!-- Facebook SDK Loader -->
+<!-- Facebook SDK -->
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 <script src="js/script.js"></script>
-
-
 <script>
   function toggleFBPanel() {
     const panel = document.getElementById("fbFeedPanel");
@@ -161,7 +159,6 @@
       toggleBtn.addEventListener("click", toggleFBPanel);
     }
 
-    // Collapse mobile nav on link click
     const navLinks = document.querySelectorAll('#navMenu a');
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
