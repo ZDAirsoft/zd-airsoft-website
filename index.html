@@ -23,7 +23,6 @@
     </nav>
   </div>
 </header>
-<script src="js/script.js"></script>
 
 <section class="hero">
   <div class="hero-content">
@@ -143,36 +142,45 @@
   </div>
 </div>
 
-<!-- Facebook SDK -->
+<!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"
+  onload="facebookSDKReady()"></script>
 
+<!-- Your Custom Script (deferred until SDK loads) -->
 <script>
-  function toggleFBPanel() {
-    const panel = document.getElementById("fbFeedPanel");
-    panel.classList.toggle("visible");
-  }
+  function facebookSDKReady() {
+    console.log("✅ Facebook SDK Loaded");
+    const fbToggle = document.getElementById("fbToggle");
+    const fbPanel = document.getElementById("fbFeedPanel");
+    const navMenu = document.getElementById("navMenu");
+    const menuToggle = document.querySelector(".menu-toggle");
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("fbToggle");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", toggleFBPanel);
+    console.log("🔧 Debug – Script load at –", new Date());
+    console.log("fbToggle exists? –", !!fbToggle);
+    console.log("fbFeedPanel exists? –", !!fbPanel);
+    console.log("navMenu exists? –", !!navMenu);
+    console.log("menuToggle exists? –", !!menuToggle);
+
+    if (fbToggle && fbPanel) {
+      fbToggle.addEventListener("click", () => {
+        fbPanel.classList.toggle("visible");
+      });
     }
 
-    const navLinks = document.querySelectorAll('#navMenu a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        document.getElementById("navMenu").classList.remove("active");
+    if (menuToggle && navMenu) {
+      menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
       });
-    });
-  });
+    }
 
-  function toggleMenu() {
-    const nav = document.getElementById("navMenu");
-    nav.classList.toggle("active");
+    // Now load your carousel and other scripts AFTER SDK is ready
+    const script = document.createElement('script');
+    script.src = "js/script.js";
+    document.body.appendChild(script);
   }
 </script>
-
 
 </body>
 </html>
