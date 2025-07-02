@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Z&D Airsoft | Tactical Mobile Fun</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="js/script.js"></script>
 </head>
 <body>
 
@@ -143,27 +142,11 @@
   </div>
 </div>
 
-<!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
-<script>
-  window.fbAsyncInit = function() {
-    console.log("✅ Facebook SDK Loaded");
-
-    const fbToggle = document.getElementById("fbToggle");
-    const fbPanel = document.getElementById("fbFeedPanel");
-    const closeBtn = document.querySelector(".close-btn");
-
-    if (fbToggle && fbPanel) {
-      fbToggle.addEventListener("click", () => fbPanel.classList.toggle("visible"));
-    }
-
-    if (closeBtn && fbPanel) {
-      closeBtn.addEventListener("click", () => fbPanel.classList.remove("visible"));
-    }
-  };
-</script>
 <script async defer crossorigin="anonymous"
   src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
+
+<script src="js/script.js"></script>
 
 </body>
 </html>
