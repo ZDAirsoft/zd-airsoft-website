@@ -110,6 +110,8 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 50vh;
+  z-index: 1;
+  position: relative;
 }
 
 
@@ -296,9 +298,12 @@ a.button:hover, button:hover {
   max-width: 800px;
   margin: auto;
   position: relative;
+  z-index: 1;
 }
 .carousel-slide {
   display: none;
+  z-index: 1;
+  position: relative;
   width: 100%;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(255,255,255,0.1);
@@ -474,7 +479,8 @@ form button:hover {
   border: none;
   padding: 0;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 #fbToggle .fb-icon {
@@ -501,12 +507,12 @@ form button:hover {
   border: 2px solid #1877f2;
   padding: 10px;
   border-radius: 10px;
-  z-index: 999;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
   overflow: auto;
   transition: right 0.4s ease-in-out;
-  z-index: 1000;
+  z-index: 9998;
   overflow: hidden;
+  pointer-events: auto;
 }
 
 .fb-icon {
