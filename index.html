@@ -143,10 +143,28 @@
 </div>
 
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 
-<script src="js/script.js"></script>
+<script>
+  window.fbAsyncInit = function() {
+    console.log("✅ Facebook SDK ready (index.html)");
+
+    const fbToggle = document.getElementById("fbToggle");
+    const fbPanel = document.getElementById("fbFeedPanel");
+
+    if (fbToggle && fbPanel) {
+      fbToggle.addEventListener("click", () => fbPanel.classList.toggle("visible"));
+      fbPanel.querySelector(".close-btn")
+             .addEventListener("click", () => fbPanel.classList.remove("visible"));
+    }
+  };
+</script>
+
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0">
+</script>
+
+<script defer src="js/script.js"></script>
+
 
 </body>
 </html>
