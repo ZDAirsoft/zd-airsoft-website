@@ -59,23 +59,4 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-
-  // Facebook SDK Ready
-  window.fbAsyncInit = function () {
-    const fbToggle = document.getElementById("fbToggle");
-    const fbPanel = document.getElementById("fbFeedPanel");
-
-    if (fbToggle && fbPanel) {
-      fbToggle.addEventListener("click", () => {
-        fbPanel.classList.toggle("visible");
-      });
-
-      const closeBtn = fbPanel.querySelector(".close-btn");
-      if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-          fbPanel.classList.remove("visible");
-        });
-      }
-    }
-  };
 });
