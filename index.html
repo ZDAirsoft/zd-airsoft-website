@@ -146,7 +146,7 @@
 <!-- Facebook SDK -->
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
-<script src="js/script.js"></script>
+
 <script>
   function toggleFBPanel() {
     const panel = document.getElementById("fbFeedPanel");
@@ -172,14 +172,7 @@
     nav.classList.toggle("active");
   }
 </script>
-
-<script>
-console.log("🔧 Debug – Script load at", new Date());
-console.log("fbToggle exists?", !!document.getElementById("fbToggle"));
-console.log("fbFeedPanel exists?", !!document.getElementById("fbFeedPanel"));
-console.log("navMenu exists?", !!document.getElementById("navMenu"));
-console.log("menuToggle exists?", !!document.querySelector(".menu-toggle"));
-</script>
+<script src="js/script.js"></script>
 
 </body>
 </html>
