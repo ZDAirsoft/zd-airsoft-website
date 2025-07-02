@@ -125,7 +125,7 @@
 <div id="fbFeedPanel">
   <div class="fb-header">
     <span>Follow Us on Facebook</span>
-    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
+    <button class="close-btn">✖</button>
   </div>
   <div class="fb-page"
     data-href="https://www.facebook.com/zdairsoft"
@@ -144,43 +144,25 @@
 
 <!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"
-  onload="facebookSDKReady()"></script>
-
-<!-- Your Custom Script (deferred until SDK loads) -->
 <script>
-  function facebookSDKReady() {
+  window.fbAsyncInit = function() {
     console.log("✅ Facebook SDK Loaded");
+
     const fbToggle = document.getElementById("fbToggle");
     const fbPanel = document.getElementById("fbFeedPanel");
-    const navMenu = document.getElementById("navMenu");
-    const menuToggle = document.querySelector(".menu-toggle");
-
-    console.log("🔧 Debug – Script load at –", new Date());
-    console.log("fbToggle exists? –", !!fbToggle);
-    console.log("fbFeedPanel exists? –", !!fbPanel);
-    console.log("navMenu exists? –", !!navMenu);
-    console.log("menuToggle exists? –", !!menuToggle);
+    const closeBtn = document.querySelector(".close-btn");
 
     if (fbToggle && fbPanel) {
-      fbToggle.addEventListener("click", () => {
-        fbPanel.classList.toggle("visible");
-      });
+      fbToggle.addEventListener("click", () => fbPanel.classList.toggle("visible"));
     }
 
-    if (menuToggle && navMenu) {
-      menuToggle.addEventListener("click", () => {
-        navMenu.classList.toggle("active");
-      });
+    if (closeBtn && fbPanel) {
+      closeBtn.addEventListener("click", () => fbPanel.classList.remove("visible"));
     }
-
-    // Now load your carousel and other scripts AFTER SDK is ready
-    const script = document.createElement('script');
-    script.src = "js/script.js";
-    document.body.appendChild(script);
-  }
+  };
 </script>
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 
 </body>
 </html>
