@@ -72,7 +72,7 @@
 <div id="fbFeedPanel">
   <div class="fb-header">
     <span>Follow Us on Facebook</span>
-    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
+    <button class="close-btn">✖</button>
   </div>
   <div class="fb-page"
     data-href="https://www.facebook.com/zdairsoft"
@@ -89,43 +89,28 @@
   </div>
 </div>
 
-<!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"
-  onload="facebookSDKReady()"></script>
+
 <script>
-  function facebookSDKReady() {
+  window.fbAsyncInit = function() {
+    console.log("✅ Facebook SDK ready (index.html)");
+
     const fbToggle = document.getElementById("fbToggle");
     const fbPanel = document.getElementById("fbFeedPanel");
-    const menuToggle = document.querySelector(".menu-toggle");
-    const navMenu = document.getElementById("navMenu");
 
     if (fbToggle && fbPanel) {
-      fbToggle.addEventListener("click", () => {
-        fbPanel.classList.toggle("visible");
-      });
-      const closeBtn = fbPanel.querySelector(".close-btn");
-      if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-          fbPanel.classList.remove("visible");
-        });
-      }
+      fbToggle.addEventListener("click", () => fbPanel.classList.toggle("visible"));
+      fbPanel.querySelector(".close-btn")
+             .addEventListener("click", () => fbPanel.classList.remove("visible"));
     }
-
-    if (menuToggle && navMenu) {
-      menuToggle.addEventListener("click", () => {
-        navMenu.classList.toggle("active");
-      });
-      navMenu.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-          navMenu.classList.remove("active");
-        });
-      });
-    }
-  }
+  };
 </script>
-<script src="js/script.js"></script>
+
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0">
+</script>
+
+<script defer src="js/script.js"></script>
 
 </body>
 </html>
