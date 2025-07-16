@@ -11,7 +11,7 @@
 <header class="header">
   <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" class="banner-logo" />
   <div class="header-inner">
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="menu-toggle">☰</div>
     <nav class="nav" id="navMenu">
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
@@ -89,27 +89,12 @@
   </div>
 </div>
 
+<!-- Facebook SDK Loader -->
 <div id="fb-root"></div>
-
-<script>
-  window.fbAsyncInit = function() {
-    console.log("✅ Facebook SDK ready (index.html)");
-
-    const fbToggle = document.getElementById("fbToggle");
-    const fbPanel = document.getElementById("fbFeedPanel");
-
-    if (fbToggle && fbPanel) {
-      fbToggle.addEventListener("click", () => fbPanel.classList.toggle("visible"));
-      fbPanel.querySelector(".close-btn")
-             .addEventListener("click", () => fbPanel.classList.remove("visible"));
-    }
-  };
-</script>
-
 <script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0">
-</script>
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 
+<!-- Main Script -->
 <script defer src="js/script.js"></script>
 
 </body>
