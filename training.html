@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Training Videos | Z&D Airsoft</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="header">
+  <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" class="banner-logo" />
+  <div class="header-inner">
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <nav class="nav" id="navMenu">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="event-calendar.html">Booking</a>
+      <a href="waiver.html">Waiver</a>
+      <a href="community.html">Community</a>
+      <a href="vinyl.html">Vinyl Services</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="framed-section contact-section">
+  <h2 class="section-title">🎯 Train Smarter, Play Faster</h2>
+  <p class="tagline">Watch these quick videos to be range-ready before your turn!</p>
+  <p>
+    No more waiting through briefings — just watch, learn, and step right up. These videos cover all the essentials to help you get the most out of your Z&D Airsoft experience.
+  </p>
+
+  <div class="video-block">
+    <h3 class="highlight-title">✅ Intro & The 5 Weapon Safety Rules</h3>
+    <iframe src="https://youtu.be/MajHQ_q4trM" allowfullscreen></iframe>
+
+    <h3 class="highlight-title">✅ How to Use the Airsoft Blasters</h3>
+    <iframe src="https://youtu.be/NDCXEHQYtCw" allowfullscreen></iframe>
+
+    <h3 class="highlight-title">✅ Navigating the Game Screens</h3>
+    <iframe src="https://youtu.be/nrDDY9Y0ch4" allowfullscreen></iframe>
+
+    <h3 class="highlight-title">✅ Game Showcase: Pick Before You Play</h3>
+    <iframe src="https://youtu.be/ZxAMFpR3oic" allowfullscreen></iframe>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p>&copy; 2025 Z&D Airsoft, LLC — Veteran-Owned | Mobile Tactical Entertainment</p>
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="event-calendar.html">Booking</a>
+      <a href="waiver.html">Waiver</a>
+      <a href="community.html">Community</a>
+      <a href="vinyl.html">Vinyl Services</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- Floating Facebook Icon -->
+<button id="fbToggle" title="Follow us on Facebook">
+  <img src="images/fblogo.png" alt="Facebook Icon" class="fb-icon" />
+</button>
+
+<!-- Slide-in Facebook Feed Panel -->
+<div id="fbFeedPanel">
+  <div class="fb-header">
+    <span>Follow Us on Facebook</span>
+    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
+  </div>
+  <div class="fb-page"
+    data-href="https://www.facebook.com/zdairsoft"
+    data-tabs="timeline"
+    data-width=""
+    data-height="500"
+    data-small-header="false"
+    data-adapt-container-width="true"
+    data-hide-cover="false"
+    data-show-facepile="true">
+    <blockquote cite="https://www.facebook.com/zdairsoft" class="fb-xfbml-parse-ignore">
+      <a href="https://www.facebook.com/zdairsoft">Z&D Airsoft</a>
+    </blockquote>
+  </div>
+</div>
+
+<!-- Facebook SDK Loader -->
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"
+  onload="facebookSDKReady()"></script>
+<script>
+  function facebookSDKReady() {
+    const fbToggle = document.getElementById("fbToggle");
+    const fbPanel = document.getElementById("fbFeedPanel");
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navMenu = document.getElementById("navMenu");
+
+    if (fbToggle && fbPanel) {
+      fbToggle.addEventListener("click", () => {
+        fbPanel.classList.toggle("visible");
+      });
+      const closeBtn = fbPanel.querySelector(".close-btn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          fbPanel.classList.remove("visible");
+        });
+      }
+    }
+
+    if (menuToggle && navMenu) {
+      menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+      });
+      navMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+          navMenu.classList.remove("active");
+        });
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
