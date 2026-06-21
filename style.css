@@ -374,6 +374,69 @@ iframe {
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0,0,0,0.4);
 }
+.community-table {
+  width: 90%;
+  max-width: 850px;
+  margin: 1.5rem auto;   /* Centers the table */
+  border-collapse: collapse;
+  color: white;
+}
+
+.community-table th,
+.community-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.community-table th {
+  background-color: #e63946;
+  color: white;
+  font-weight: bold;
+}
+
+.community-table tr:nth-child(even) {
+  background-color: #1e1e1e;
+}
+
+.community-table tr:nth-child(odd) {
+  background-color: #151515;
+}
+
+.community-table tr:hover {
+  background-color: #252525;
+}
+
+/* Make Quarter and Donation stand out */
+.community-table td:first-child,
+.community-table td:last-child {
+  font-weight: bold;
+  color: #ffd166; /* Matches your site's gold accent */
+}
+
+/* Center the Donation column */
+.community-table th:last-child,
+.community-table td:last-child {
+  text-align: center;
+}
+
+/* Slightly center the Quarter column */
+.community-table th:first-child,
+.community-table td:first-child {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .community-table {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .community-table th,
+  .community-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
 
 /* === CONTACT FORM STYLES === */
 .contact-section {
