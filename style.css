@@ -251,6 +251,82 @@ body {
   border-radius: 5px;
 }
 
+/* =========================
+   PAST EVENTS
+   ========================= */
+
+.past-events-section {
+  text-align: center;
+}
+
+.past-events-list {
+  width: 90%;
+  max-width: 850px;
+  margin: 2rem auto;
+  text-align: left;
+}
+
+.past-event {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+
+  background-color: #151515;
+  border-left: 4px solid #e63946;
+  border-radius: 4px;
+}
+
+.past-event:nth-child(even) {
+  background-color: #1e1e1e;
+}
+
+.past-event-date {
+  color: #ffd166;
+  font-weight: bold;
+  text-align: center;
+}
+
+.past-event strong {
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.past-event p {
+  margin: 0.35rem 0 0;
+  color: #ccc;
+}
+
+.past-events-thanks {
+  max-width: 850px;
+  margin: 1.5rem auto 0;
+  text-align: center;
+}
+
+.past-events-thanks strong {
+  color: #ffd166;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .past-events-list {
+    width: 100%;
+  }
+
+  .past-event {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    text-align: center;
+  }
+
+  .past-event-date {
+    text-align: center;
+  }
+}
+
 /* === GLOBAL BUTTONS === */
 a.button, button {
   background: #e63946;
