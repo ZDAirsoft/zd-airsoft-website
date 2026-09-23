@@ -435,6 +435,31 @@ iframe {
   }
 }
 
+/* === ABOUT US SECTION STYLES === */
+/* =========================
+   WHY WE DO IT
+   ========================= */
+
+.why-we-do-it {
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.why-we-do-it p {
+  margin-bottom: 1.25rem;
+}
+
+.why-we-do-it .highlight-box {
+  margin: 1.75rem auto;
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.why-we-do-it .highlight-box strong {
+  color: #ffd166;
+}
 
 /* === COMMUNITY SECTION STYLES === */
 .community-section {
