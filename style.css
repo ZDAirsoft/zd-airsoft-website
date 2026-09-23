@@ -675,6 +675,12 @@ form .hidden {
   display: none;
 }
 
+/* === WAIVER PAGE === */
+
+.waiver-view-title {
+  font-size: 1.5rem;
+}
+
 /* Footer Styling */
 .site-footer {
   background-color: #000;
