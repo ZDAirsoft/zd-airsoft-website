@@ -1,28 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="canonical" href="https://zdairsoft.com/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Standard Favicons -->
-  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48x48.png">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>Contact Z&amp;D Airsoft | Findlay, Ohio</title>
+
+  <meta
+    name="description"
+    content="Contact Z&D Airsoft with questions about events, partnerships, fundraisers, community opportunities, or our mobile Airsoft and NERF smart-target experience."
+  />
+
+  <link rel="canonical" href="https://zdairsoft.com/contact.html" />
+
+  <!-- Standard Favicons -->
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48x48.png" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
   <!-- Apple Touch Icon -->
-  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-  <title>Contact Us | Z&D Airsoft</title>
-  <meta name="description" content="Z&D Airsoft wants to hear from you!">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
+
+
 <body>
 
+<!-- HEADER -->
 <header class="header">
-  <img src="images/zd-airsoft-logo.png" alt="Z&D Airsoft Logo" class="banner-logo" />
+
+  <img
+    src="images/zd-airsoft-logo.png"
+    alt="Z&D Airsoft Logo"
+    class="banner-logo"
+  />
+
   <div class="header-inner">
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+    <div class="menu-toggle">☰</div>
+
     <nav class="nav" id="navMenu">
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
@@ -33,34 +52,179 @@
       <a href="vinyl.html">Vinyl Services</a>
       <a href="contact.html">Contact</a>
     </nav>
+
   </div>
+
 </header>
 
+
+<!-- CONTACT -->
 <section class="framed-section contact-section">
-  <h2 class="section-title">Let’s Talk!</h2>
-  <p class="tagline">Booking questions, partnerships, or just saying hi? We’re here for it.</p>
-  <p>
-    Whether you're planning a private party, public event, or fundraiser — we’d love to hear from you. Fill out the form below and we'll get back to you shortly.
+
+  <h2 class="section-title">
+    💬 Let's Talk!
+  </h2>
+
+  <p class="tagline">
+    Questions, partnerships, community opportunities, or something else?
+    Send us a message.
   </p>
 
-  <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you">
-    <input type="hidden" name="form-name" value="contact" />
-    <p class="hidden">
-      <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+  <p>
+    Whether you have a question about Z&amp;D Airsoft, want to discuss
+    an event or partnership, have a community opportunity in mind, or
+    just want to reach out, use the form below and we'll get back to you
+    as soon as we can.
+  </p>
+
+  <div class="highlight-box">
+    <strong>Looking to book an event?</strong>
+
+    <p>
+      Our Booking page includes our availability calendar, event pricing
+      information, and a more detailed booking request form.
     </p>
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="email" name="email" placeholder="Your Email" required />
-    <input type="text" name="subject" placeholder="Subject" />
-    <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
+
     <div class="centered-button">
-      <button type="submit">📨 Send Message</button>
+      <a href="event-calendar.html" class="button">
+        📅 Visit the Booking Page
+      </a>
     </div>
+  </div>
+
+
+  <!-- CONTACT FORM -->
+  <form
+    name="contact"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    action="/thank-you">
+
+    <input
+      type="hidden"
+      name="form-name"
+      value="contact"
+    />
+
+    <!-- Netlify Honeypot -->
+    <p class="hidden">
+      <label>
+        Don't fill this out if you're human:
+        <input name="bot-field" />
+      </label>
+    </p>
+
+
+    <label for="contact-name">
+      Your Name
+    </label>
+
+    <input
+      type="text"
+      id="contact-name"
+      name="name"
+      placeholder="Your Name"
+      autocomplete="name"
+      required
+    />
+
+
+    <label for="contact-email">
+      Email Address
+    </label>
+
+    <input
+      type="email"
+      id="contact-email"
+      name="email"
+      placeholder="Your Email Address"
+      autocomplete="email"
+      required
+    />
+
+
+    <label for="contact-subject">
+      What Can We Help With?
+    </label>
+
+    <select
+      id="contact-subject"
+      name="subject"
+      required>
+
+      <option value="" selected disabled>
+        Select a topic
+      </option>
+
+      <option value="General Question">
+        General Question
+      </option>
+
+      <option value="Event Question">
+        Event Question
+      </option>
+
+      <option value="Community / Partnership Opportunity">
+        Community / Partnership Opportunity
+      </option>
+
+      <option value="Fundraiser / Charity">
+        Fundraiser / Charity
+      </option>
+
+      <option value="Vinyl Services">
+        Vinyl Services
+      </option>
+
+      <option value="Website / Technical Issue">
+        Website / Technical Issue
+      </option>
+
+      <option value="Other">
+        Other
+      </option>
+
+    </select>
+
+
+    <label for="contact-message">
+      Your Message
+    </label>
+
+    <textarea
+      id="contact-message"
+      name="message"
+      rows="7"
+      placeholder="Tell us how we can help."
+      required>
+    </textarea>
+
+
+    <div class="centered-button">
+
+      <button type="submit">
+        📨 Send Message
+      </button>
+
+    </div>
+
   </form>
+
 </section>
 
+
+<!-- FOOTER -->
 <footer class="site-footer">
+
   <div class="footer-inner">
-    <p>&copy; 2025 Z&D Airsoft, LLC — Veteran-Owned | Mobile Tactical Entertainment</p>
+
+    <p>
+      &copy; <span id="copyrightYear"></span>
+      Z&amp;D Airsoft, LLC,
+      Veteran-Owned | Mobile Smart-Target Entertainment
+    </p>
+
     <nav class="footer-nav">
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
@@ -71,20 +235,45 @@
       <a href="vinyl.html">Vinyl Services</a>
       <a href="contact.html">Contact</a>
     </nav>
+
   </div>
+
 </footer>
-    <!-- Floating Facebook Icon -->
-<button id="fbToggle" title="Follow us on Facebook">
-  <img src="images/fblogo.png" alt="Facebook Icon" class="fb-icon" />
+
+
+<!-- FLOATING FACEBOOK ICON -->
+<button
+  id="fbToggle"
+  title="Follow us on Facebook"
+  aria-label="Open Z&D Airsoft Facebook feed">
+
+  <img
+    src="images/fblogo.png"
+    alt="Facebook"
+    class="fb-icon"
+  />
+
 </button>
 
-<!-- Slide-in Facebook Feed Panel -->
+
+<!-- FACEBOOK SLIDE-OUT PANEL -->
 <div id="fbFeedPanel">
+
   <div class="fb-header">
+
     <span>Follow Us on Facebook</span>
-    <button onclick="toggleFBPanel()" class="close-btn">✖</button>
+
+    <button
+      class="close-btn"
+      aria-label="Close Facebook feed">
+      ✖
+    </button>
+
   </div>
-  <div class="fb-page"
+
+
+  <div
+    class="fb-page"
     data-href="https://www.facebook.com/zdairsoft"
     data-tabs="timeline"
     data-width=""
@@ -93,42 +282,76 @@
     data-adapt-container-width="true"
     data-hide-cover="false"
     data-show-facepile="true">
-    <blockquote cite="https://www.facebook.com/zdairsoft" class="fb-xfbml-parse-ignore">
-      <a href="https://www.facebook.com/zdairsoft">Z&D Airsoft</a>
+
+    <blockquote
+      cite="https://www.facebook.com/zdairsoft"
+      class="fb-xfbml-parse-ignore">
+
+      <a href="https://www.facebook.com/zdairsoft">
+        Z&amp;D Airsoft
+      </a>
+
     </blockquote>
+
   </div>
+
 </div>
 
-<!-- Facebook SDK Loader -->
+
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0"></script>
 
+
+<!-- FACEBOOK SDK -->
 <script>
-  function toggleFBPanel() {
-    const panel = document.getElementById("fbFeedPanel");
-    panel.classList.toggle("visible");
-  }
+  window.fbAsyncInit = function () {
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("fbToggle");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", toggleFBPanel);
-    }
+    console.log("✅ Facebook SDK ready (contact.html)");
 
-    // Collapse mobile nav on link click
-    const navLinks = document.querySelectorAll('#navMenu a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        document.getElementById("navMenu").classList.remove("active");
+    const fbToggle =
+      document.getElementById("fbToggle");
+
+    const fbPanel =
+      document.getElementById("fbFeedPanel");
+
+    if (fbToggle && fbPanel) {
+
+      fbToggle.addEventListener("click", () => {
+        fbPanel.classList.toggle("visible");
       });
-    });
-  });
 
-  function toggleMenu() {
-    const nav = document.getElementById("navMenu");
-    nav.classList.toggle("active");
-  }
+      const closeButton =
+        fbPanel.querySelector(".close-btn");
+
+      if (closeButton) {
+
+        closeButton.addEventListener("click", () => {
+          fbPanel.classList.remove("visible");
+        });
+
+      }
+    }
+  };
 </script>
+
+
+<script
+  async
+  defer
+  crossorigin="anonymous"
+  src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v23.0">
+</script>
+
+
+<!-- SITE JAVASCRIPT -->
+<script defer src="js/script.js"></script>
+
+
+<!-- AUTOMATIC COPYRIGHT YEAR -->
+<script>
+  document.getElementById("copyrightYear").textContent =
+    new Date().getFullYear();
+</script>
+
 
 </body>
 </html>
