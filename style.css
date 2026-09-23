@@ -596,7 +596,7 @@ iframe {
 }
 .contact-section textarea { resize: vertical; }
 
-/* === Booking FORM STYLING === */
+/* === BOOKING FORM STYLING === */
 
 form {
   max-width: 700px;
@@ -605,23 +605,56 @@ form {
   flex-direction: column;
 }
 
+/* Form labels */
+form label {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+}
+
+/* Inputs, dropdowns, and text areas */
 form input,
+form select,
 form textarea {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
   font-size: 1rem;
+  font-family: inherit;
   border-radius: 5px;
-  border: none;
+  border: 1px solid #555;
+  background: #333;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+/* Dropdown-specific styling */
+form select {
+  cursor: pointer;
+}
+
+/* Keep dropdown options readable */
+form select option {
   background: #333;
   color: #fff;
 }
 
+/* Text area */
 form textarea {
   resize: vertical;
   min-height: 120px;
 }
 
+/* Focus state */
+form input:focus,
+form select:focus,
+form textarea:focus {
+  outline: none;
+  border-color: #e63946;
+  box-shadow: 0 0 5px rgba(230, 57, 70, 0.5);
+}
+
+/* Submit button */
 form button {
   background: #e63946;
   color: white;
@@ -635,6 +668,11 @@ form button {
 
 form button:hover {
   background: #d62839;
+}
+
+/* Hidden Netlify spam-protection field */
+form .hidden {
+  display: none;
 }
 
 /* Footer Styling */
