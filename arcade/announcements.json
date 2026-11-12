@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "revision": "2026-11-12T10:15:02.875Z",
+  "revision": "2026-11-12T10:16:28.500Z",
   "displaySeconds": 12,
   "messages": [
     {
       "id": "welcome",
-      "text": "Remember, ALWAYS keep your rifle pointed in a safe direction!",
+      "text": "Testing the message expiration!",
       "enabled": true,
-      "expiresAtUtc": "2026-11-12T10:16:00.000Z"
+      "expiresAtUtc": "2026-11-12T10:19:00.000Z"
     },
     {
       "id": "safety",
