@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "2026-11-12T10:22:11.255Z",
+  "revision": "2026-11-12T10:22:42.875Z",
   "displaySeconds": 12,
   "messages": [
     {
@@ -20,7 +20,7 @@
     },
     {
       "id": "staff",
-      "text": "Treat EVERY weapon like it's loaded!",
+      "text": "Keep your rifle pointed in a safe direction, ALWAYS!",
       "enabled": true
     },
     {
