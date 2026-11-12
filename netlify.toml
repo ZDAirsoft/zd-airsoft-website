@@ -3,3 +3,10 @@
   to = "/"
   status = 301
   force = true
+
+# Arcade announcements
+[[headers]]
+  for = "/arcade/announcements.json"
+  [headers.values]
+    Cache-Control = "public, max-age=60, must-revalidate"
+    Content-Type = "application/json; charset=utf-8"
