@@ -1,13 +1,12 @@
 {
-  "schemaVersion": 2,
-  "revision": "2026-11-12T10:16:28.500Z",
+  "schemaVersion": 1,
+  "revision": "2026-11-12T10:22:11.255Z",
   "displaySeconds": 12,
   "messages": [
     {
       "id": "welcome",
-      "text": "Testing the message expiration!",
-      "enabled": true,
-      "expiresAtUtc": "2026-11-12T10:19:00.000Z"
+      "text": "Treat EVERY weapon like it's loaded!",
+      "enabled": true
     },
     {
       "id": "safety",
