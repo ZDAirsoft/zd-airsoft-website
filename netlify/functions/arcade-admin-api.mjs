@@ -79,6 +79,20 @@ async function readJson(request, limit = 20000) {
   if (Buffer.byteLength(source, 'utf8') > limit) throw new Error('Request too large');
   return JSON.parse(source);
 }
+function optionalUtc(value, fieldName, index) {
+  if (value === undefined || value === null || value === '') return null;
+  if (typeof value !== 'string' ||
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value)) {
+    throw new Error(`Message ${index} has an invalid ${fieldName} date.`);
+  }
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime()) ||
+      date.getUTCFullYear() < 2020 || date.getUTCFullYear() > 2100 ||
+      date.toISOString() !== (value.includes('.') ? value : value.replace('Z', '.000Z'))) {
+    throw new Error(`Message ${index} has an invalid ${fieldName} date.`);
+  }
+  return value;
+}
 function validateFeed(candidate) {
   if (!candidate || typeof candidate !== 'object' || !Array.isArray(candidate.messages) ||
       candidate.messages.length > MAX_MESSAGES || !Number.isInteger(candidate.displaySeconds) ||
@@ -97,9 +111,19 @@ function validateFeed(candidate) {
     if (!text || text.length > MAX_CHARS) {
       throw new Error(`Message ${i + 1} must contain 1–140 characters.`);
     }
-    return { id: item.id, text, enabled: item.enabled };
+    const startsAtUtc = optionalUtc(item.startsAtUtc, 'start', i + 1);
+    const expiresAtUtc = optionalUtc(item.expiresAtUtc, 'end', i + 1);
+    if (startsAtUtc && expiresAtUtc && Date.parse(expiresAtUtc) <= Date.parse(startsAtUtc))
+      throw new Error(`Message ${i + 1}: End must be later than Start.`);
+    const message = { id: item.id, text, enabled: item.enabled };
+    if (startsAtUtc) message.startsAtUtc = startsAtUtc;
+    if (expiresAtUtc) message.expiresAtUtc = expiresAtUtc;
+    return message;
   });
-  const payload = { schemaVersion: 1, revision: new Date().toISOString(),
+  // Old SMT24 builds reject version 2 rather than accidentally displaying
+  // scheduled messages before their start or after their expiration.
+  const hasWindows = messages.some(m => m.startsAtUtc || m.expiresAtUtc);
+  const payload = { schemaVersion: hasWindows ? 2 : 1, revision: new Date().toISOString(),
     displaySeconds: candidate.displaySeconds, messages };
   const output = JSON.stringify(payload, null, 2) + '\n';
   if (Buffer.byteLength(output, 'utf8') > MAX_PAYLOAD_BYTES) throw new Error('Announcement file exceeds 16 KB.');
@@ -124,7 +148,7 @@ async function getRepoFile(cfg) {
       typeof data.content !== 'string') throw new Error('Unexpected response from GitHub.');
   const decoded = Buffer.from(data.content.replace(/\s/g, ''), 'base64').toString('utf8');
   const parsed = JSON.parse(decoded);
-  if (parsed.schemaVersion !== 1 || !Array.isArray(parsed.messages)) throw new Error('Unsupported existing announcement JSON.');
+  if (![1, 2].includes(parsed.schemaVersion) || !Array.isArray(parsed.messages)) throw new Error('Unsupported existing announcement JSON.');
   return { feed: parsed, sha: data.sha };
 }
 async function publish(cfg, expectedSha, output) {

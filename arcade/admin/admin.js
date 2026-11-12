@@ -57,27 +57,67 @@
     return `msg_${Date.now().toString(36)}_${[...bytes].map(b => b.toString(16).padStart(2, '0')).join('')}`;
   }
   function sanitize(text) { return String(text || '').replace(/[\r\n\t]/g, ' ').trim(); }
-  function activeMessages() {
+  function localInputValue(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (!Number.isFinite(d.getTime())) return '';
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  function utcFromLocal(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime()) || localInputValue(date.toISOString()) !== value)
+      throw new Error('That local time does not exist in your time zone (daylight saving change).');
+    return date.toISOString();
+  }
+  function browserTimeZone() {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'your device'; }
+    catch { return 'your device'; }
+  }
+  function previewTime() {
+    const selected = $('preview-at').value;
+    return selected ? new Date(selected) : new Date();
+  }
+  function isEligible(item, when) {
+    if (!item.enabled) return false;
+    if (item.startsAtUtc && when.getTime() < Date.parse(item.startsAtUtc)) return false;
+    if (item.expiresAtUtc && when.getTime() >= Date.parse(item.expiresAtUtc)) return false;
+    return true;
+  }
+  function activeMessages(when = previewTime()) {
     const seen = new Set(), result = [];
     for (const item of state.feed?.messages || []) {
       const text = sanitize(item.text);
-      if (!item.enabled || text.length === 0 || text.length > 140 || seen.has(text)) continue;
+      if (!isEligible(item, when) || text.length === 0 || text.length > 140 || seen.has(text)) continue;
       seen.add(text); result.push(text);
       if (result.length >= 5) break;
     }
     return result;
   }
+  function statusFor(item, active, when) {
+    if (!item.enabled) return 'Disabled';
+    if (item.startsAtUtc && when.getTime() < Date.parse(item.startsAtUtc)) return 'Waiting for start';
+    if (item.expiresAtUtc && when.getTime() >= Date.parse(item.expiresAtUtc)) return 'Expired';
+    if (active.includes(sanitize(item.text))) return 'Showing in preview';
+    return 'Eligible, but outside top five';
+  }
   function renderPreview() {
     if (!state.feed) return;
-    const active = activeMessages();
+    const when = previewTime();
+    const active = activeMessages(when);
     $('active-count').textContent = `${active.length} / 5 displayed`;
-    $('preview-counter').textContent = `${active.length} active of 5 maximum · ${state.feed.displaySeconds || 12}s each`;
+    $('preview-counter').textContent = `${active.length} active of 5 maximum · ${state.feed.displaySeconds || 12}s each · ${$('preview-at').value ? 'selected time' : 'now'}`;
     $('preview-text').textContent = active[0] || 'No active messages — launcher will use built-in fallback';
     const list = $('preview-list'); list.replaceChildren();
     active.forEach((value, i) => {
       const el = document.createElement('div'); el.className = 'preview-item';
       const num = document.createElement('strong'); num.textContent = `${i + 1}. `;
       el.append(num, document.createTextNode(value)); list.append(el);
+    });
+    $('message-list').querySelectorAll('[data-message-status]').forEach((el) => {
+      const item = state.feed.messages.find(m => m.id === el.dataset.messageStatus);
+      if (item) el.textContent = statusFor(item, active, when);
     });
   }
   function button(label, title, click, { danger = false, disabled = false } = {}) {
@@ -109,7 +149,28 @@
       count.textContent = `${item.text.length}/140 characters`;
       input.addEventListener('input', () => { item.text = input.value; count.textContent = `${item.text.length}/140 characters`; setDirty(true); renderPreview(); });
       check.addEventListener('change', () => { item.enabled = check.checked; card.classList.toggle('is-disabled', !item.enabled); setDirty(true); renderPreview(); });
-      footer.append(label, count); card.append(heading, input, footer); list.append(card);
+      const schedule = document.createElement('div'); schedule.className = 'schedule-row';
+      function scheduleInput(field, title) {
+        const wrap = document.createElement('div'); wrap.className = 'schedule-field';
+        const fieldLabel = document.createElement('label'); fieldLabel.textContent = title;
+        const dateInput = document.createElement('input'); dateInput.type = 'datetime-local';
+        dateInput.step = '60'; dateInput.value = localInputValue(item[field]);
+        dateInput.setAttribute('aria-label', `${title} for announcement ${i + 1}`);
+        dateInput.addEventListener('change', () => {
+          try {
+            const date = utcFromLocal(dateInput.value);
+            item[field] = date;
+            setDirty(true); renderPreview();
+            notice(date ? `${title} saved in ${browserTimeZone()} time. Publish to activate.` : `${title} removed. Publish to activate.`);
+          } catch (e) { dateInput.value = localInputValue(item[field]); notice(e.message, 'error'); }
+        });
+        wrap.append(fieldLabel, dateInput); return wrap;
+      }
+      schedule.append(scheduleInput('startsAtUtc', 'Starts (optional)'), scheduleInput('expiresAtUtc', 'Ends (optional)'));
+      const status = document.createElement('div'); status.className = 'schedule-status';
+      status.dataset.messageStatus = item.id;
+      footer.append(label, count);
+      card.append(heading, input, schedule, status, footer); list.append(card);
     });
     $('add-message').disabled = state.busy || state.feed.messages.length >= maxMessages;
     renderPreview();
@@ -127,7 +188,11 @@
     if (!value?.feed || !Array.isArray(value.feed.messages) || typeof value.sha !== 'string')
       throw new Error('The repository returned an invalid announcement file.');
     state.feed = { schemaVersion: 1, displaySeconds: value.feed.displaySeconds || 12,
-      messages: value.feed.messages.map((item) => ({ id: String(item.id), text: String(item.text), enabled: Boolean(item.enabled) })) };
+      messages: value.feed.messages.map((item) => ({
+        id: String(item.id), text: String(item.text), enabled: Boolean(item.enabled),
+        startsAtUtc: typeof item.startsAtUtc === 'string' ? item.startsAtUtc : '',
+        expiresAtUtc: typeof item.expiresAtUtc === 'string' ? item.expiresAtUtc : ''
+      })) };
     state.sha = value.sha;
     $('duration').value = String(state.feed.displaySeconds);
     setDirty(false); renderCards();
@@ -163,14 +228,19 @@
   });
   $('add-message').addEventListener('click', () => {
     if (state.feed.messages.length >= maxMessages) return notice('Maximum 20 stored messages.', 'warning');
-    state.feed.messages.unshift({ id: newId(), text: '', enabled: true });
+    state.feed.messages.unshift({ id: newId(), text: '', enabled: true, startsAtUtc: '', expiresAtUtc: '' });
     setDirty(true); renderCards(); $('message-list').querySelector('textarea')?.focus();
   });
   $('publish').addEventListener('click', async () => {
     if (!state.dirty || state.busy || !state.feed) return;
     if (state.feed.messages.some(m => !sanitize(m.text) || sanitize(m.text).length > 140)) return notice('Every announcement needs 1–140 characters. Remove or fill empty announcements.', 'error');
-    const active = activeMessages();
-    if (!active.length && !confirm('This will publish zero enabled messages. Monitors will use their built-in fallback. Continue?')) return;
+    for (let i = 0; i < state.feed.messages.length; i++) {
+      const m = state.feed.messages[i];
+      if (m.startsAtUtc && m.expiresAtUtc && Date.parse(m.expiresAtUtc) <= Date.parse(m.startsAtUtc))
+        return notice(`Announcement ${i + 1}: End must be later than Start.`, 'error');
+    }
+    const active = activeMessages(new Date());
+    if (!active.length && !confirm('No website messages are active right now. The launcher will use built-in messages until a schedule starts. Continue?')) return;
     setBusy(true);
     try {
       const response = await api('publish', { method: 'POST', body: { expectedSha: state.sha, feed: state.feed } });
@@ -180,6 +250,11 @@
     } catch (e) { notice(e.message, 'error'); }
     finally { setBusy(false); }
   });
+  $('timezone-note').textContent = `Dates use this device's time zone (${browserTimeZone()}). Leave either field blank for no limit. The SMT24 must have the correct clock.`;
+  $('preview-at').addEventListener('change', renderPreview);
+  $('preview-now').addEventListener('click', () => { $('preview-at').value = ''; renderPreview(); });
+  // A long-open editor should show schedule changes without a page refresh.
+  window.setInterval(() => { if (state.session && state.feed && !$('preview-at').value) renderPreview(); }, 30000);
   window.addEventListener('beforeunload', (event) => { if (state.dirty) { event.preventDefault(); event.returnValue = ''; } });
   (async function start() {
     try {

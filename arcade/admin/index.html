@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="color-scheme" content="dark">
   <title>Arcade Announcements | Z&D Airsoft Staff</title>
-  <link rel="stylesheet" href="./admin.css">
-  <script src="./admin.js" defer></script>
+  <link rel="stylesheet" href="./admin.css?v=2">
+  <script src="./admin.js?v=2" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -45,13 +45,14 @@
       <div class="workspace">
         <section class="panel editor-panel">
           <div class="panel-heading between">
-            <div><h2>Manage messages</h2><p>Newest at the top. The first five enabled, unique messages appear on each monitor.</p></div>
+            <div><h2>Manage messages</h2><p>Put important messages first. The launcher shows the first five enabled messages whose dates are currently active.</p></div>
             <button id="reload" class="btn subtle" type="button">Reload</button>
           </div>
           <div class="field-row">
             <label for="duration">Seconds per announcement</label>
             <div class="duration-wrap"><input id="duration" type="number" min="5" max="30" step="1" value="12" inputmode="numeric"><span>5–30 sec</span></div>
           </div>
+          <p class="timezone-note" id="timezone-note">Start and end times are entered in your device's local time zone. Leave either blank for no limit.</p>
           <div id="message-list" class="message-list" aria-live="off"></div>
           <button id="add-message" class="btn secondary add-message" type="button">+ Add new announcement at top</button>
           <div class="editor-footer">
@@ -62,7 +63,8 @@
 
         <aside class="sidebar">
           <section class="panel preview-panel">
-            <div class="panel-heading"><div><h2>Launcher preview</h2><p>These are the messages that will rotate after the website update reaches the SMT24.</p></div></div>
+            <div class="panel-heading"><div><h2>Launcher preview</h2><p>See which five messages the SMT24 should display at a selected time.</p></div></div>
+            <div class="preview-time"><label for="preview-at">Preview time (optional)</label><input type="datetime-local" id="preview-at" step="60"><button type="button" id="preview-now" class="btn subtle">Show now</button></div>
             <div class="screen-preview"><div class="screen-label">Z&D AIRSOFT ARCADE</div><div class="screen-window"><span class="megaphone" aria-hidden="true">📢</span><p id="preview-text">No enabled messages</p></div><div class="preview-counter" id="preview-counter">0 / 5</div></div>
             <div id="preview-list" class="preview-list"></div>
           </section>
@@ -74,7 +76,8 @@
               <li>The secure service commits the JSON file to your website repository.</li>
               <li>Your hosting pipeline publishes the change; online SMT24 monitors check approximately every five minutes.</li>
             </ol>
-            <p class="muted small">This first version does not schedule or auto-expire messages. Disable or remove short-lived messages when they're no longer relevant. Changes won't reach offline monitors until they reconnect.</p>
+            <p class="muted small">Scheduled messages start and expire automatically on the SMT24, including while offline, provided the message was downloaded before disconnecting and the Android clock is correct. New or edited messages require a website deploy and a launcher refresh.</p>
+            <p class="muted small">For safety, feeds containing scheduled messages use format v2. Older launcher builds will keep their previous announcements instead of ignoring schedule dates and showing messages at the wrong time.</p>
             <a href="/arcade/announcements.json" target="_blank" rel="noopener noreferrer">Open the public announcement feed</a>
           </section>
         </aside>
