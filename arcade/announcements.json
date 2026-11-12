@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "revision": "2026-11-12-starter",
+  "revision": "2026-11-12T09:45:31.846Z",
   "displaySeconds": 12,
   "messages": [
     {
       "id": "welcome",
-      "text": "Testing The Messages!",
+      "text": "Remember, ALWAYS keep your rifle pointed in a safe direction!",
       "enabled": true
     },
     {
