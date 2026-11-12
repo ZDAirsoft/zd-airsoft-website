@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "2026-11-12T09:45:31.846Z",
+  "revision": "2026-11-12T09:46:09.468Z",
   "displaySeconds": 12,
   "messages": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "id": "safety",
-      "text": "Safety first: Keep your eye protection on while using the range.",
+      "text": "Safety first: Keep your eye protection on while inside the range.",
       "enabled": true
     },
     {
