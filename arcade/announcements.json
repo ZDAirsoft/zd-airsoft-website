@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "revision": "2026-11-12-starter",
+  "displaySeconds": 12,
+  "messages": [
+    {
+      "id": "welcome",
+      "text": "Welcome to the Z&D Airsoft Arcade!",
+      "enabled": true
+    },
+    {
+      "id": "safety",
+      "text": "Safety first: Keep your eye protection on while using the range.",
+      "enabled": true
+    },
+    {
+      "id": "challenge",
+      "text": "Ready for a challenge? Try a different game on the arcade launcher!",
+      "enabled": true
+    },
+    {
+      "id": "staff",
+      "text": "Need help? Our Z&D Airsoft staff are here for you.",
+      "enabled": true
+    },
+    {
+      "id": "fun",
+      "text": "Have fun, practice your skills, and respect the range!",
+      "enabled": true
+    }
+  ]
+}
