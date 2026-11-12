@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="color-scheme" content="dark">
+  <title>Arcade Announcements | Z&D Airsoft Staff</title>
+  <link rel="stylesheet" href="./admin.css">
+  <script src="./admin.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brandmark" aria-hidden="true">Z<span>+</span>D</div>
+    <div class="brandtext"><span class="brand">Z&D AIRSOFT</span><span class="sub">ARCADE NETWORK / STAFF</span></div>
+    <button id="logout" class="text-button hidden" type="button">Sign out</button>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">STAFF COMMAND CENTER</p>
+      <h1>Arcade announcements</h1>
+      <p>Publish messages to your SMT24 launchers from your phone or computer. Monitors keep their last five downloaded messages when offline.</p>
+    </section>
+
+    <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
+
+    <section id="login-view" class="panel auth-panel">
+      <div class="panel-heading"><span class="section-icon">🔒</span><div><h2>Staff sign in</h2><p>Sign in to access and publish website announcements.</p></div></div>
+      <form id="login-form" autocomplete="off">
+        <label for="password">Administrator password</label>
+        <input id="password" type="password" autocomplete="current-password" required minlength="1" placeholder="Enter your staff publishing password">
+        <button id="login-submit" class="btn primary" type="submit">Sign in</button>
+      </form>
+      <p class="muted small">Your password is sent only to the secure website service. It is never embedded in this page or stored in the browser.</p>
+    </section>
+
+    <div id="editor-view" class="hidden">
+      <div class="stats">
+        <div class="stat"><span>FEED</span><strong id="status-label">Loaded from repository</strong></div>
+        <div class="stat"><span>MONITOR CAPACITY</span><strong id="active-count">0 / 5 displayed</strong></div>
+        <div class="stat"><span>WEBSITE</span><strong>Publishing via GitHub</strong></div>
+      </div>
+
+      <div class="workspace">
+        <section class="panel editor-panel">
+          <div class="panel-heading between">
+            <div><h2>Manage messages</h2><p>Newest at the top. The first five enabled, unique messages appear on each monitor.</p></div>
+            <button id="reload" class="btn subtle" type="button">Reload</button>
+          </div>
+          <div class="field-row">
+            <label for="duration">Seconds per announcement</label>
+            <div class="duration-wrap"><input id="duration" type="number" min="5" max="30" step="1" value="12" inputmode="numeric"><span>5–30 sec</span></div>
+          </div>
+          <div id="message-list" class="message-list" aria-live="off"></div>
+          <button id="add-message" class="btn secondary add-message" type="button">+ Add new announcement at top</button>
+          <div class="editor-footer">
+            <span id="save-status" class="muted" aria-live="polite">No unpublished changes</span>
+            <button id="publish" class="btn primary" type="button" disabled>Save and publish</button>
+          </div>
+        </section>
+
+        <aside class="sidebar">
+          <section class="panel preview-panel">
+            <div class="panel-heading"><div><h2>Launcher preview</h2><p>These are the messages that will rotate after the website update reaches the SMT24.</p></div></div>
+            <div class="screen-preview"><div class="screen-label">Z&D AIRSOFT ARCADE</div><div class="screen-window"><span class="megaphone" aria-hidden="true">📢</span><p id="preview-text">No enabled messages</p></div><div class="preview-counter" id="preview-counter">0 / 5</div></div>
+            <div id="preview-list" class="preview-list"></div>
+          </section>
+          <section class="panel help-panel">
+            <h2>How publishing works</h2>
+            <ol>
+              <li>Add or edit your announcement text.</li>
+              <li>Review the launcher preview, then select <strong>Save and publish</strong>.</li>
+              <li>The secure service commits the JSON file to your website repository.</li>
+              <li>Your hosting pipeline publishes the change; online SMT24 monitors check approximately every five minutes.</li>
+            </ol>
+            <p class="muted small">This first version does not schedule or auto-expire messages. Disable or remove short-lived messages when they're no longer relevant. Changes won't reach offline monitors until they reconnect.</p>
+            <a href="/arcade/announcements.json" target="_blank" rel="noopener noreferrer">Open the public announcement feed</a>
+          </section>
+        </aside>
+      </div>
+    </div>
+    <footer>© Z&D Airsoft, LLC · Staff administration · Do not share your publishing password.</footer>
+  </main>
+</body>
+</html>
