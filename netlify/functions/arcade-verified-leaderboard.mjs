@@ -25,22 +25,25 @@ const integer=(v,lo,hi)=>Number.isInteger(v)&&v>=lo&&v<=hi;
 const nickname=(v)=>typeof v==='string'&&/^[A-Za-z0-9][A-Za-z0-9 -]{1,15}$/.test(v);
 function publicRow(entry,rank,mode,revision) {
   const extra=isExtraMode(mode,revision);
-  const capped=mode==='ten-shot'?revision===2?300:125:mode==='perfect-100'?100:5120;
+  const capped=mode==='ten-shot'?revision===2?300:125:mode==='perfect-100'?revision===2?300:100:revision===2?7680:5120;
   if(!entry||entry.rank!==rank||!nickname(entry.nickname)||
      !integer(entry.score,0,capped)||!integer(entry.rawPoints,0,extra?5120:100)||
      !integer(entry.registeredImpacts,1,extra?512:10)||!integer(entry.centerHits,0,extra?512:10)||
      entry.centerHits>entry.registeredImpacts||!integer(entry.timeMs,0,extra?3600000:600000)||
-     !integer(entry.speedBonus,0,revision===2?100:15)||
-     !integer(entry.groupingBonus,0,revision===2?100:10)||
+     !integer(entry.speedBonus,0,extra?(revision===2?100:0):revision===2?100:15)||
+     !integer(entry.groupingBonus,extra&&revision===2?-3840:0,extra?(revision===2?2560:0):revision===2?100:10)||
      !(entry.groupMeanX100===null||integer(entry.groupMeanX100,0,100000))||
      entry.rawPoints<entry.centerHits*10)throw Error('invalid_leaderboard_row');
   if(extra){
-    if(entry.groupMeanX100!==null||!validBullseyeExtra(mode,revision,{
+    if((revision===1 && entry.groupMeanX100!==null) ||
+       (revision===2 && entry.groupMeanX100===null) ||
+       !validBullseyeExtra(mode,revision,{
       raw_points:entry.rawPoints,shots:entry.registeredImpacts,main_target_hits:
-      // This is only a structural ranking check. The signed claim writer already
-      // validated mainTargetHits; for a public record center hits establish lower bound.
+      // Shape-only public check: mainTargetHits are not disclosed in this feed.
+      // Atomic signed claim writer checked the actual main count.
       entry.registeredImpacts,center_hits:entry.centerHits,time_ms:entry.timeMs,
-      speed_bonus:entry.speedBonus,group_bonus:entry.groupingBonus},entry.score))throw Error('invalid_extra_row');
+      speed_bonus:entry.speedBonus,group_bonus:entry.groupingBonus,
+      ...(revision===2?{group_mean_x100:entry.groupMeanX100}:{})},entry.score,revision===2))throw Error('invalid_extra_row');
   } else {
     if(entry.registeredImpacts!==10||entry.rawPoints>100||
        entry.score!==entry.rawPoints+entry.groupingBonus+entry.speedBonus||
@@ -80,7 +83,7 @@ export async function handleVerifiedLeaderboard(req,env=process.env,fetcher=fetc
   if(!project||typeof secret!=='string'||!/^sb_secret_[A-Za-z0-9_-]{12,}$/.test(secret))
     return answer(503,{error:'service_not_configured'});
   try {
-    const upstream=await fetcher(project+'/rest/v1/rpc/'+(isExtraMode(mode,revision)?'arcade_live_verified_leaderboard_bullseye_modes_v1':revision===2?'arcade_live_verified_leaderboard_v2':'arcade_live_verified_leaderboard_v1'),{
+    const upstream=await fetcher(project+'/rest/v1/rpc/'+(isExtraMode(mode,revision)?(revision===2?'arcade_live_verified_leaderboard_bullseye_modes_v2':'arcade_live_verified_leaderboard_bullseye_modes_v1'):revision===2?'arcade_live_verified_leaderboard_v2':'arcade_live_verified_leaderboard_v1'),{
       method:'POST',redirect:'error',cache:'no-store',signal:AbortSignal.timeout(8000),
       headers:{apikey:secret,'content-type':'application/json',accept:'application/json'},
       body:JSON.stringify({p_game_id:'bullseye-classic',p_mode_id:mode,p_scoring_revision:revision}),
@@ -104,8 +107,8 @@ export async function handleVerifiedLeaderboard(req,env=process.env,fetcher=fetc
     return answer(200,{
       schemaVersion:1,verified:true,gameId:'bullseye-classic',modeId:mode,
       scoringRevision:revision,generatedAtUtc:current.toISOString(),
-      rankingOrder:mode==='perfect-100'?['shots_asc','time_asc','center_hits_desc']:
-       isExtraMode(mode,revision)?['score_desc','center_hits_desc','shots_asc']:
+      rankingOrder:mode==='perfect-100'?(revision===2?['score_desc','shots_asc','time_asc']:['shots_asc','time_asc','center_hits_desc']):
+       isExtraMode(mode,revision)?(revision===2?['score_desc','raw_points_desc','center_hits_desc','grouping_asc','shots_asc']:['score_desc','center_hits_desc','shots_asc']):
        revision===2?['score_desc','raw_points_desc','center_hits_desc','time_asc','grouping_asc']:
         ['score_desc','raw_points_desc','center_hits_desc','grouping_asc','time_asc'],
       rows:validated.slice(0,limit),

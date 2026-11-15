@@ -18,8 +18,8 @@ function safeReport(doc){
     doc.recent.length>50||doc.personalBests.length>50||doc.lifetimeByMode.length>50)throw Error('shape');
   const legitMode=(r)=>isObject(r)&&r.gameId==='bullseye-classic'&&(
     (r.modeId==='ten-shot'&&[1,2].includes(r.scoringRevision))||
-    (['timed-10','timed-20','timed-30','perfect-100'].includes(r.modeId)&&r.scoringRevision===1));
-  const scoreMax=(r)=>r.modeId==='ten-shot'?(r.scoringRevision===2?300:125):r.modeId==='perfect-100'?100:5120;
+    (['timed-10','timed-20','timed-30','perfect-100'].includes(r.modeId)&&[1,2].includes(r.scoringRevision)));
+  const scoreMax=(r)=>r.modeId==='ten-shot'?(r.scoringRevision===2?300:125):r.modeId==='perfect-100'?(r.scoringRevision===2?300:100):(r.scoringRevision===2?7680:5120);
   const rawMax=(r)=>r.modeId==='ten-shot'?100:5120;
   const impactsMax=(r)=>r.modeId==='ten-shot'?10:512;
   const timeMax=(r)=>r.modeId==='ten-shot'?600000:3600000;
@@ -28,7 +28,9 @@ function safeReport(doc){
       typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt))||
       !integer(r.rawPoints,0,rawMax(r))||!integer(r.registeredImpacts,1,impactsMax(r))||
       !integer(r.centerHits,0,r.registeredImpacts)||!integer(r.timeMs,0,timeMax(r))||
-      (r.modeId!=='ten-shot'?(r.groupingBonus!==0||r.speedBonus!==0):
+      (r.modeId!=='ten-shot'?(r.scoringRevision===1?(r.groupingBonus!==0||r.speedBonus!==0):
+        (r.modeId==='perfect-100'?!integer(r.groupingBonus,0,100)||!integer(r.speedBonus,0,100):
+          !integer(r.groupingBonus,-3840,2560)||r.speedBonus!==0)):
         r.scoringRevision===1?(![0,5,10].includes(r.groupingBonus)||![0,5,10,15].includes(r.speedBonus)):
         (!integer(r.groupingBonus,0,100)||!integer(r.speedBonus,0,100))))throw Error('recent');
     return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,

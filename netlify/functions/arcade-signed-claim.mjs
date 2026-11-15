@@ -13,7 +13,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{1
 const KEY_ID = /^K[A-F0-9]{16}$/;
 const SAFE_KEY = /^[a-z][a-z0-9_]{0,31}$/;
 const METRICS = new Set(['raw_points','shots','main_target_hits','center_hits',
-  'time_ms','speed_bonus','group_bonus','group_mean_x100','gm']);
+  'time_ms','speed_bonus','group_bonus','group_mean_x100','gm','gp']);
 const REQUIRED_METRICS = ['raw_points','shots','main_target_hits','center_hits','time_ms','speed_bonus','group_bonus'];
 const jsonHeaders = { 'content-type':'application/json; charset=utf-8',
   'cache-control':'no-store',pragma:'no-cache','x-content-type-options':'nosniff' };
@@ -95,7 +95,7 @@ export function validateBullseye(receipt) {
   const q=receipt.q;
   if(receipt.g!=='bullseye-classic'||!supportedBullseye(receipt.m,receipt.rv)||!positive(receipt.e)||receipt.e<1||
     !/^[0-9]{2}$/.test(receipt.d)||receipt.d==='00'||!KEY_ID.test(receipt.k)||
-    !positive(receipt.t)||receipt.t>4102444800||!positive(receipt.s)||receipt.s>(isExtraMode(receipt.m,receipt.rv)?5120:receipt.rv===2?300:125)||
+    !positive(receipt.t)||receipt.t>4102444800||!positive(receipt.s)||receipt.s>(isExtraMode(receipt.m,receipt.rv)?receipt.rv===2?(receipt.m==='perfect-100'?300:7680):5120:receipt.rv===2?300:125)||
     Object.keys(q).some(k=>!METRICS.has(k))||REQUIRED_METRICS.some(k=>!Object.hasOwn(q,k)))return false;
   const {raw_points:raw,shots,main_target_hits:main,center_hits:center,time_ms:time,
     speed_bonus:speed,group_bonus:group}=q;
@@ -186,12 +186,12 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     const pilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
       env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1 &&
       (isExtraMode(verified.receipt.m,verified.receipt.rv)?
-        env.ARCADE_BULLSEYE_ALL_MODES_PILOT==='true':
+        (verified.receipt.rv===2 ? env.ARCADE_BULLSEYE_ACCURACY_R2_PILOT==='true' : env.ARCADE_BULLSEYE_ALL_MODES_PILOT==='true'):
         verified.receipt.rv===1 || (verified.receipt.rv===2 && env.ARCADE_SIGNED_R2_ENABLED==='true'));
     if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
       gameId:verified.receipt.g,modeId:verified.receipt.m,score:verified.receipt.s,metrics:verified.receipt.q});
     if(!pilotEnabled)return deny(503,'signed_claims_not_activated');
-    const result=await fetchJson(endpoint+(isExtraMode(verified.receipt.m,verified.receipt.rv)?'arcade_live_signed_claim_bullseye_modes_v1':
+    const result=await fetchJson(endpoint+(isExtraMode(verified.receipt.m,verified.receipt.rv)?(verified.receipt.rv===2?'arcade_live_signed_claim_bullseye_modes_v2':'arcade_live_signed_claim_bullseye_modes_v1'):
       verified.receipt.rv===2?'arcade_live_signed_claim_v2':'arcade_live_signed_claim_v1'),sk,'POST',{
       p_auth_user_id:auth.data.id,p_result_id:verified.receipt.r,p_event_id:verified.receipt.e,
       p_monitor_id:verified.receipt.d,p_key_id:verified.receipt.k,
@@ -200,8 +200,10 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
       p_game_id:verified.receipt.g,p_mode_id:verified.receipt.m,
       p_scoring_revision:verified.receipt.rv,p_score:verified.receipt.s,
       p_device_unix_seconds:verified.receipt.t,p_metrics:verified.receipt.rv===2?
-        {...Object.fromEntries(Object.entries(verified.receipt.q).filter(([name])=>name!=='gm')),
-          ...(verified.receipt.q.gm===undefined?{}:{group_mean_x100:verified.receipt.q.gm})}:verified.receipt.q});
+        {...Object.fromEntries(Object.entries(verified.receipt.q).filter(([name])=>name!=='gm'&&name!=='gp')),
+          ...(verified.receipt.q.gm===undefined?{}:{group_mean_x100:verified.receipt.q.gm}),
+          ...(isExtraMode(verified.receipt.m,verified.receipt.rv)?
+             {group_bonus:verified.receipt.q.group_bonus-(verified.receipt.q.gp||0)}:{})}:verified.receipt.q});
     if(!result.ok) {
       // PostgreSQL's pilot allowlist/ownership denial is an authorization result,
       // not an outage. Never echo raw upstream SQL text to the client.
