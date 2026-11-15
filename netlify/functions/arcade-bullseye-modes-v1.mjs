@@ -6,7 +6,7 @@
  */
 const int=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 export const EXTRA_MODES=Object.freeze(['timed-10','timed-20','timed-30','perfect-100']);
-export const supportedBullseye=(mode,revision)=>mode==='ten-shot'?revision===1||revision===2:
+export const supportedBullseye=(mode,revision)=>mode==='ten-shot'?revision===1||revision===2||revision===3:
  EXTRA_MODES.includes(mode)&&(revision===1||revision===2);
 export const isExtraMode=(mode,rev)=>EXTRA_MODES.includes(mode)&&(rev===1||rev===2);
 export const timedSeconds=(mode)=>mode==='timed-10'?10:mode==='timed-20'?20:mode==='timed-30'?30:0;
