@@ -67,7 +67,7 @@ export function parseSignedWire(wire) {
   const payload=b64url(pieces[0]), signature=b64url(pieces[1]);
   if(payload.length<1||payload.length>512||signature.length!==64)throw Error('malformed_receipt');
   const m=decodeCbor(payload);
-  for(const k of m.keys())if(typeof k!=='number'||k<1||k>12)throw Error('malformed_receipt');
+  for(const k of m.keys())if(typeof k!=='number'||k<1||k>13)throw Error('malformed_receipt');
   for(let i=1;i<=9;i++)if(!m.has(i))throw Error('malformed_receipt');
   const u=(k)=>{const n=m.get(k);if(!positive(n))throw Error('malformed_receipt');return n;};
   const id=(k,max)=>{const v=m.get(k);
@@ -85,6 +85,7 @@ export function parseSignedWire(wire) {
   }
   if(m.has(11))receipt.n=u(11);
   if(m.has(12))receipt.e=u(12);
+  if(m.has(13)){ if(u(13)!==1)throw Error('malformed_receipt'); receipt.p=1; }
   return { receipt,payload,signature };
 }
 /** Stage 4 Bullseye bounds, same as launcher sign_round_v1. */
@@ -175,9 +176,13 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
           metrics:parsed.receipt.q,code:'event_or_key_pending'});
       return deny(verified.code==='verification_unavailable'?503:422,verified.code);
     }
-    if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:env.ARCADE_SIGNED_CLAIMS_ENABLED==='true',
+    // Pilot claims are intentionally scoped to one server-approved event.
+    // Merely setting the main flag must never enable arbitrary future events.
+    const pilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
+      env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1;
+    if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
       gameId:verified.receipt.g,modeId:verified.receipt.m,score:verified.receipt.s,metrics:verified.receipt.q});
-    if(env.ARCADE_SIGNED_CLAIMS_ENABLED!=='true')return deny(503,'signed_claims_not_activated');
+    if(!pilotEnabled)return deny(503,'signed_claims_not_activated');
     const result=await fetchJson(endpoint+'arcade_live_signed_claim_v1',sk,'POST',{
       p_auth_user_id:auth.data.id,p_result_id:verified.receipt.r,p_event_id:verified.receipt.e,
       p_monitor_id:verified.receipt.d,p_key_id:verified.receipt.k,
