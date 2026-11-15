@@ -7,6 +7,7 @@
 import { createPublicKey, createHash, verify as verifySignature } from 'node:crypto';
 import { validR2Score } from './arcade-bullseye-r2.mjs';
 import { validR3Score } from './arcade-bullseye-r3.mjs';
+import { validZombieCampaignV1, normalizedZombieMetrics } from './arcade-zombie-campaign-v1.mjs';
 import {supportedBullseye,isExtraMode,validBullseyeExtra} from './arcade-bullseye-modes-v1.mjs';
 
 const SIGNING_DOMAIN = Buffer.from('ZDAIRSOFT_SCORE_V1\0', 'utf8');
@@ -126,7 +127,7 @@ export function verifyRegisteredReceipt(parsed, record, nowSec) {
     if(record.publicKeySha256!==fp)return {ok:false,code:'registry_fingerprint_mismatch'};
     if(!verifySignature('sha256',Buffer.concat([SIGNING_DOMAIN,payload]),
       {key:publicKey,dsaEncoding:'ieee-p1363'},signature))return {ok:false,code:'invalid_signature'};
-    if(!validateBullseye(r))return {ok:false,code:'unsupported_result'};
+    if(!(validateBullseye(r)||validZombieCampaignV1(r)))return {ok:false,code:'unsupported_result'};
     const start=Date.parse(record.startsAt),end=Date.parse(record.endsAt);
     if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return {ok:false,code:'invalid_event_window'};
     if(record.keyStatus!=='active'||record.eventStatus!=='active'&&record.eventStatus!=='closed')
@@ -160,7 +161,7 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     (body.mode!=='verify'&&body.mode!=='claim'))return deny(400,'invalid_request');
   let parsed;
   try {parsed=parseSignedWire(body.wire);}catch{return deny(422,'malformed_receipt');}
-  if(!validateBullseye(parsed.receipt))return deny(422,'unsupported_result');
+  if(!(validateBullseye(parsed.receipt)||validZombieCampaignV1(parsed.receipt)))return deny(422,'unsupported_result');
   const fetchJson=async(path,key,method='POST',data)=>{
     const response=await fetcher(project+path,{method,redirect:'error',cache:'no-store',
       headers:{apikey:key,'content-type':'application/json',accept:'application/json',
@@ -185,16 +186,17 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     }
     // Pilot claims are intentionally scoped to one server-approved event.
     // Merely setting the main flag must never enable arbitrary future events.
+    const zombie=validZombieCampaignV1(verified.receipt);
     const pilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
       env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1 &&
-      (isExtraMode(verified.receipt.m,verified.receipt.rv)?
+      (zombie ? env.ARCADE_ZOMBIE_CAMPAIGN_R1_PILOT==='true' : isExtraMode(verified.receipt.m,verified.receipt.rv)?
         (verified.receipt.rv===2 ? env.ARCADE_BULLSEYE_ACCURACY_R2_PILOT==='true' : env.ARCADE_BULLSEYE_ALL_MODES_PILOT==='true'):
         verified.receipt.rv===1 || (verified.receipt.rv===2 && env.ARCADE_SIGNED_R2_ENABLED==='true') ||
         (verified.receipt.rv===3 && env.ARCADE_BULLSEYE_STREAK_R3_PILOT==='true'));
     if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
       gameId:verified.receipt.g,modeId:verified.receipt.m,score:verified.receipt.s,metrics:verified.receipt.q});
     if(!pilotEnabled)return deny(503,'signed_claims_not_activated');
-    const result=await fetchJson(endpoint+(isExtraMode(verified.receipt.m,verified.receipt.rv)?(verified.receipt.rv===2?'arcade_live_signed_claim_bullseye_modes_v2':'arcade_live_signed_claim_bullseye_modes_v1'):
+    const result=await fetchJson(endpoint+(zombie?'arcade_live_signed_claim_zombie_campaign_v1':isExtraMode(verified.receipt.m,verified.receipt.rv)?(verified.receipt.rv===2?'arcade_live_signed_claim_bullseye_modes_v2':'arcade_live_signed_claim_bullseye_modes_v1'):
       verified.receipt.rv===3?'arcade_live_signed_claim_v3':verified.receipt.rv===2?'arcade_live_signed_claim_v2':'arcade_live_signed_claim_v1'),sk,'POST',{
       p_auth_user_id:auth.data.id,p_result_id:verified.receipt.r,p_event_id:verified.receipt.e,
       p_monitor_id:verified.receipt.d,p_key_id:verified.receipt.k,
@@ -202,7 +204,7 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
       p_payload_sha256_hex:verified.digest,p_public_key_sha256_hex:verified.publicKeySha256,
       p_game_id:verified.receipt.g,p_mode_id:verified.receipt.m,
       p_scoring_revision:verified.receipt.rv,p_score:verified.receipt.s,
-      p_device_unix_seconds:verified.receipt.t,p_metrics:verified.receipt.rv===3?
+      p_device_unix_seconds:verified.receipt.t,p_metrics:zombie?normalizedZombieMetrics(verified.receipt.q):verified.receipt.rv===3?
         {...Object.fromEntries(Object.entries(verified.receipt.q).filter(([name])=>name!=='gm'&&name!=='st')),
           ...(verified.receipt.q.gm===undefined?{}:{group_mean_x100:verified.receipt.q.gm}),
           longest_streak:verified.receipt.q.st}:verified.receipt.rv===2?
