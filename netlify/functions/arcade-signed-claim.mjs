@@ -5,13 +5,14 @@
  * No direct table writes, browser-supplied profile IDs, or client-side verification.
  */
 import { createPublicKey, createHash, verify as verifySignature } from 'node:crypto';
+import { validR2Score } from './arcade-bullseye-r2.mjs';
 
 const SIGNING_DOMAIN = Buffer.from('ZDAIRSOFT_SCORE_V1\0', 'utf8');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const KEY_ID = /^K[A-F0-9]{16}$/;
 const SAFE_KEY = /^[a-z][a-z0-9_]{0,31}$/;
 const METRICS = new Set(['raw_points','shots','main_target_hits','center_hits',
-  'time_ms','speed_bonus','group_bonus','group_mean_x100']);
+  'time_ms','speed_bonus','group_bonus','group_mean_x100','gm']);
 const REQUIRED_METRICS = ['raw_points','shots','main_target_hits','center_hits','time_ms','speed_bonus','group_bonus'];
 const jsonHeaders = { 'content-type':'application/json; charset=utf-8',
   'cache-control':'no-store',pragma:'no-cache','x-content-type-options':'nosniff' };
@@ -91,12 +92,14 @@ export function parseSignedWire(wire) {
 /** Stage 4 Bullseye bounds, same as launcher sign_round_v1. */
 export function validateBullseye(receipt) {
   const q=receipt.q;
-  if(receipt.g!=='bullseye-classic'||receipt.m!=='ten-shot'||receipt.rv!==1||!positive(receipt.e)||receipt.e<1||
+  if(receipt.g!=='bullseye-classic'||receipt.m!=='ten-shot'||![1,2].includes(receipt.rv)||!positive(receipt.e)||receipt.e<1||
     !/^[0-9]{2}$/.test(receipt.d)||receipt.d==='00'||!KEY_ID.test(receipt.k)||
-    !positive(receipt.t)||receipt.t>4102444800||!positive(receipt.s)||receipt.s>125||
+    !positive(receipt.t)||receipt.t>4102444800||!positive(receipt.s)||receipt.s>(receipt.rv===2?300:125)||
     Object.keys(q).some(k=>!METRICS.has(k))||REQUIRED_METRICS.some(k=>!Object.hasOwn(q,k)))return false;
   const {raw_points:raw,shots,main_target_hits:main,center_hits:center,time_ms:time,
-    speed_bonus:speed,group_bonus:group,group_mean_x100:radius}=q;
+    speed_bonus:speed,group_bonus:group}=q;
+  const radius=receipt.rv===2?q.gm:q.group_mean_x100;
+  if(receipt.rv===2)return validR2Score(q,receipt.s);
   if(!positive(raw)||raw>100||shots!==10||!positive(main)||main>10||!positive(center)||center>main||
     raw<center*10||!positive(time)||time>600000||![0,5,10,15].includes(speed)||
     ![0,5,10].includes(group)||receipt.s!==raw+speed+group)return false;
@@ -179,18 +182,21 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     // Pilot claims are intentionally scoped to one server-approved event.
     // Merely setting the main flag must never enable arbitrary future events.
     const pilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
-      env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1;
+      env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1 &&
+      (verified.receipt.rv===1 || (verified.receipt.rv===2 && env.ARCADE_SIGNED_R2_ENABLED==='true'));
     if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
       gameId:verified.receipt.g,modeId:verified.receipt.m,score:verified.receipt.s,metrics:verified.receipt.q});
     if(!pilotEnabled)return deny(503,'signed_claims_not_activated');
-    const result=await fetchJson(endpoint+'arcade_live_signed_claim_v1',sk,'POST',{
+    const result=await fetchJson(endpoint+(verified.receipt.rv===2?'arcade_live_signed_claim_v2':'arcade_live_signed_claim_v1'),sk,'POST',{
       p_auth_user_id:auth.data.id,p_result_id:verified.receipt.r,p_event_id:verified.receipt.e,
       p_monitor_id:verified.receipt.d,p_key_id:verified.receipt.k,
       p_payload_hex:verified.payloadHex,p_signature_hex:verified.signatureHex,
       p_payload_sha256_hex:verified.digest,p_public_key_sha256_hex:verified.publicKeySha256,
       p_game_id:verified.receipt.g,p_mode_id:verified.receipt.m,
       p_scoring_revision:verified.receipt.rv,p_score:verified.receipt.s,
-      p_device_unix_seconds:verified.receipt.t,p_metrics:verified.receipt.q});
+      p_device_unix_seconds:verified.receipt.t,p_metrics:verified.receipt.rv===2?
+        {...Object.fromEntries(Object.entries(verified.receipt.q).filter(([name])=>name!=='gm')),
+          ...(verified.receipt.q.gm===undefined?{}:{group_mean_x100:verified.receipt.q.gm})}:verified.receipt.q});
     if(!result.ok) {
       // PostgreSQL's pilot allowlist/ownership denial is an authorization result,
       // not an outage. Never echo raw upstream SQL text to the client.

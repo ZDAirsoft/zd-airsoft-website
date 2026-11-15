@@ -16,29 +16,30 @@ function safeReport(doc){
   if(!isObject(doc)||doc.version!==1||doc.maxRecent!==50||!Array.isArray(doc.recent)||
     !Array.isArray(doc.personalBests)||!Array.isArray(doc.lifetimeByMode)||
     doc.recent.length>50||doc.personalBests.length>50||doc.lifetimeByMode.length>50)throw Error('shape');
-  const legitMode=(r)=>isObject(r)&&r.gameId==='bullseye-classic'&&r.modeId==='ten-shot'&&r.scoringRevision===1;
+  const legitMode=(r)=>isObject(r)&&r.gameId==='bullseye-classic'&&r.modeId==='ten-shot'&&[1,2].includes(r.scoringRevision);
   const recent=doc.recent.map(r=>{
-    if(!legitMode(r)||!integer(r.score,0,125)||!integer(r.eventId,1,999999)||
+    if(!legitMode(r)||!integer(r.score,0,r.scoringRevision===2?300:125)||!integer(r.eventId,1,999999)||
       typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt))||
       !integer(r.rawPoints,0,100)||!integer(r.registeredImpacts,10,10)||
       !integer(r.centerHits,0,10)||!integer(r.timeMs,0,600000)||
-      ![0,5,10].includes(r.groupingBonus)||![0,5,10,15].includes(r.speedBonus))throw Error('recent');
-    return {gameId:r.gameId,modeId:r.modeId,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
+      (r.scoringRevision===1?(![0,5,10].includes(r.groupingBonus)||![0,5,10,15].includes(r.speedBonus)):
+        (!integer(r.groupingBonus,0,100)||!integer(r.speedBonus,0,100))))throw Error('recent');
+    return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
       rawPoints:r.rawPoints,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits,
       timeMs:r.timeMs,groupingBonus:r.groupingBonus,speedBonus:r.speedBonus};
   });
   const personalBests=doc.personalBests.map(r=>{
-    if(!legitMode(r)||!integer(r.score,0,125)||typeof r.hiddenFromPublic!=='boolean'||
+    if(!legitMode(r)||!integer(r.score,0,r.scoringRevision===2?300:125)||typeof r.hiddenFromPublic!=='boolean'||
       !Number.isFinite(Date.parse(r.achievedAt))||!integer(r.rawPoints,0,100)||
       !integer(r.centerHits,0,10)||!integer(r.timeMs,0,600000))throw Error('bests');
-    return {gameId:r.gameId,modeId:r.modeId,score:r.score,achievedAt:r.achievedAt,
+    return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,achievedAt:r.achievedAt,
       rawPoints:r.rawPoints,centerHits:r.centerHits,timeMs:r.timeMs};
   });
   const lifetimeByMode=doc.lifetimeByMode.map(r=>{
     if(!legitMode(r)||!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||
       !integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER)||
       !integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||!integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('lifetime');
-    return {gameId:r.gameId,modeId:r.modeId,attempts:r.attempts,
+    return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,attempts:r.attempts,
       totalScore:r.totalScore,totalRawPoints:r.totalRawPoints,
       registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
   });
