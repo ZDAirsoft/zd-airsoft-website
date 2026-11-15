@@ -16,22 +16,29 @@ function safeReport(doc){
   if(!isObject(doc)||doc.version!==1||doc.maxRecent!==50||!Array.isArray(doc.recent)||
     !Array.isArray(doc.personalBests)||!Array.isArray(doc.lifetimeByMode)||
     doc.recent.length>50||doc.personalBests.length>50||doc.lifetimeByMode.length>50)throw Error('shape');
-  const legitMode=(r)=>isObject(r)&&r.gameId==='bullseye-classic'&&r.modeId==='ten-shot'&&[1,2].includes(r.scoringRevision);
+  const legitMode=(r)=>isObject(r)&&r.gameId==='bullseye-classic'&&(
+    (r.modeId==='ten-shot'&&[1,2].includes(r.scoringRevision))||
+    (['timed-10','timed-20','timed-30','perfect-100'].includes(r.modeId)&&r.scoringRevision===1));
+  const scoreMax=(r)=>r.modeId==='ten-shot'?(r.scoringRevision===2?300:125):r.modeId==='perfect-100'?100:5120;
+  const rawMax=(r)=>r.modeId==='ten-shot'?100:5120;
+  const impactsMax=(r)=>r.modeId==='ten-shot'?10:512;
+  const timeMax=(r)=>r.modeId==='ten-shot'?600000:3600000;
   const recent=doc.recent.map(r=>{
-    if(!legitMode(r)||!integer(r.score,0,r.scoringRevision===2?300:125)||!integer(r.eventId,1,999999)||
+    if(!legitMode(r)||!integer(r.score,0,scoreMax(r))||!integer(r.eventId,1,999999)||
       typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt))||
-      !integer(r.rawPoints,0,100)||!integer(r.registeredImpacts,10,10)||
-      !integer(r.centerHits,0,10)||!integer(r.timeMs,0,600000)||
-      (r.scoringRevision===1?(![0,5,10].includes(r.groupingBonus)||![0,5,10,15].includes(r.speedBonus)):
+      !integer(r.rawPoints,0,rawMax(r))||!integer(r.registeredImpacts,1,impactsMax(r))||
+      !integer(r.centerHits,0,r.registeredImpacts)||!integer(r.timeMs,0,timeMax(r))||
+      (r.modeId!=='ten-shot'?(r.groupingBonus!==0||r.speedBonus!==0):
+        r.scoringRevision===1?(![0,5,10].includes(r.groupingBonus)||![0,5,10,15].includes(r.speedBonus)):
         (!integer(r.groupingBonus,0,100)||!integer(r.speedBonus,0,100))))throw Error('recent');
     return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
       rawPoints:r.rawPoints,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits,
       timeMs:r.timeMs,groupingBonus:r.groupingBonus,speedBonus:r.speedBonus};
   });
   const personalBests=doc.personalBests.map(r=>{
-    if(!legitMode(r)||!integer(r.score,0,r.scoringRevision===2?300:125)||typeof r.hiddenFromPublic!=='boolean'||
-      !Number.isFinite(Date.parse(r.achievedAt))||!integer(r.rawPoints,0,100)||
-      !integer(r.centerHits,0,10)||!integer(r.timeMs,0,600000))throw Error('bests');
+    if(!legitMode(r)||!integer(r.score,0,scoreMax(r))||typeof r.hiddenFromPublic!=='boolean'||
+      !Number.isFinite(Date.parse(r.achievedAt))||!integer(r.rawPoints,0,rawMax(r))||
+      !integer(r.centerHits,0,impactsMax(r))||!integer(r.timeMs,0,timeMax(r)))throw Error('bests');
     return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,achievedAt:r.achievedAt,
       rawPoints:r.rawPoints,centerHits:r.centerHits,timeMs:r.timeMs};
   });
