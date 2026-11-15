@@ -191,7 +191,21 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
       p_game_id:verified.receipt.g,p_mode_id:verified.receipt.m,
       p_scoring_revision:verified.receipt.rv,p_score:verified.receipt.s,
       p_device_unix_seconds:verified.receipt.t,p_metrics:verified.receipt.q});
-    if(!result.ok||!isSafeResponse(result.data))return deny(503,'claim_unconfirmed');
+    if(!result.ok) {
+      // PostgreSQL's pilot allowlist/ownership denial is an authorization result,
+      // not an outage. Never echo raw upstream SQL text to the client.
+      if(result.status===403 && isSafeResponse(result.data) && result.data.code==='42501') {
+        if(result.data.message==='pilot_account_not_authorized')return deny(403,'pilot_account_not_authorized');
+        if(result.data.message==='player_not_authorized')return deny(403,'account_not_eligible');
+        return deny(403,'account_not_eligible');
+      }
+      if(result.status===409)return deny(409,'receipt_already_claimed');
+      // An RPC-side validation rejection is distinct from a temporary outage.
+      if(result.status===400 && isSafeResponse(result.data) && result.data.code==='22023')
+        return deny(422,'claim_rejected');
+      return deny(503,'claim_unconfirmed');
+    }
+    if(!isSafeResponse(result.data))return deny(503,'claim_unconfirmed');
     if(result.data.outcome==='conflict')return deny(409,'receipt_already_claimed');
     if(result.data.outcome==='created'||result.data.outcome==='existing')
       return reply(result.data.outcome==='created'?201:200,{status:result.data.outcome==='created'?'claimed':'already_claimed',
