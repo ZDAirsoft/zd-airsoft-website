@@ -16,6 +16,11 @@ function safeReport(doc){
   if(!isObject(doc)||doc.version!==1||doc.maxRecent!==50||!Array.isArray(doc.recent)||
     !Array.isArray(doc.personalBests)||!Array.isArray(doc.lifetimeByMode)||
     doc.recent.length>50||doc.personalBests.length>50||doc.lifetimeByMode.length>50)throw Error('shape');
+  const zombie=(r)=>isObject(r)&&r.gameId==='zombie-outbreak'&&r.modeId==='campaign'&&r.scoringRevision===1;
+  const zombieMetrics=(r)=>integer(r.kills,50,50)&&integer(r.targetHits,50,10000)&&
+    integer(r.qualifiedHeadshots,0,r.targetHits)&&integer(r.highestScene,5,5)&&
+    integer(r.scenesCleared,5,5)&&r.completed===1&&integer(r.timeMs,1,3600000)&&
+    r.score===25*r.targetHits+150*r.qualifiedHeadshots+75*r.kills;
   const legitMode=(r)=>isObject(r)&&r.gameId==='bullseye-classic'&&(
     (r.modeId==='ten-shot'&&[1,2,3].includes(r.scoringRevision))||
     (['timed-10','timed-20','timed-30','perfect-100'].includes(r.modeId)&&[1,2].includes(r.scoringRevision)));
@@ -24,6 +29,14 @@ function safeReport(doc){
   const impactsMax=(r)=>r.modeId==='ten-shot'?10:512;
   const timeMax=(r)=>r.modeId==='ten-shot'?600000:3600000;
   const recent=doc.recent.map(r=>{
+    if(zombie(r)){
+      if(!integer(r.eventId,1,999999)||typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt))||
+        !integer(r.score,0,1000000)||!integer(r.registeredImpacts,1,10000)||
+        r.targetHits>r.registeredImpacts||!zombieMetrics(r))throw Error('zombie_recent');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
+        registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,kills:r.kills,targetHits:r.targetHits,
+        qualifiedHeadshots:r.qualifiedHeadshots,highestScene:r.highestScene,scenesCleared:r.scenesCleared,completed:r.completed};
+    }
     if(!legitMode(r)||!integer(r.score,0,scoreMax(r))||!integer(r.eventId,1,999999)||
       typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt))||
       !integer(r.rawPoints,0,rawMax(r))||!integer(r.registeredImpacts,1,impactsMax(r))||
@@ -38,6 +51,13 @@ function safeReport(doc){
       timeMs:r.timeMs,groupingBonus:r.groupingBonus,speedBonus:r.speedBonus};
   });
   const personalBests=doc.personalBests.map(r=>{
+    if(zombie(r)){
+      if(!integer(r.score,0,1000000)||typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt))||
+        !zombieMetrics(r))throw Error('zombie_best');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,achievedAt:r.achievedAt,
+        timeMs:r.timeMs,kills:r.kills,targetHits:r.targetHits,qualifiedHeadshots:r.qualifiedHeadshots,
+        highestScene:r.highestScene,scenesCleared:r.scenesCleared,completed:r.completed};
+    }
     if(!legitMode(r)||!integer(r.score,0,scoreMax(r))||typeof r.hiddenFromPublic!=='boolean'||
       !Number.isFinite(Date.parse(r.achievedAt))||!integer(r.rawPoints,0,rawMax(r))||
       !integer(r.centerHits,0,impactsMax(r))||!integer(r.timeMs,0,timeMax(r)))throw Error('bests');
@@ -45,6 +65,14 @@ function safeReport(doc){
       rawPoints:r.rawPoints,centerHits:r.centerHits,timeMs:r.timeMs};
   });
   const lifetimeByMode=doc.lifetimeByMode.map(r=>{
+    if(zombie(r)){
+      if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
+        !integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER)||
+        !integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
+        !integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('zombie_lifetime');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,attempts:r.attempts,totalScore:r.totalScore,
+        totalRawPoints:r.totalRawPoints,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
+    }
     if(!legitMode(r)||!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||
       !integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER)||
       !integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||!integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('lifetime');
@@ -72,7 +100,7 @@ export async function handleMyVerifiedScores(req,env=process.env,fetcher=fetch){
     };
     const auth=await load('/auth/v1/user',pk);
     if(!auth.ok||!uuid.test(auth.json?.id))return answer(401,{error:'invalid_session'});
-    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v1',sk,'POST',{
+    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v2',sk,'POST',{
       p_auth_user_id:auth.json.id,
     });
     if(!result.ok)return answer(result.status===403?403:503,{error:'private_history_unavailable'});
