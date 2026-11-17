@@ -31,3 +31,22 @@ export function validSilhouetteRankRow(row,rank,mode){
     integer(row.score,0,max)&&integer(row.timeMs,0,86400000)&&
     integer(row.tenPointHits,0,100000)&&integer(row.centerChestHits,0,row.tenPointHits);
 }
+
+/** Exact proposed compact signed metric map; rejects unknown keys, missing keys and
+ * non-integer metric values BEFORE any SQL request. Keep synchronized with the signer. */
+export function normalizedSilhouetteMetrics(q){
+  if(!q||typeof q!=='object'||Array.isArray(q))return null;
+  const keys=['s','h','t','c','m','a','b','d','e','f'];
+  if(Object.keys(q).length!==keys.length||keys.some(k=>!Object.hasOwn(q,k)||
+      !Number.isSafeInteger(q[k])||q[k]<0))return null;
+  return {shots:q.s,hits:q.h,ten_point_hits:q.t,center_chest_hits:q.c,
+    time_ms:q.m,bucket0:q.a,bucket5:q.b,bucket8:q.d,bucket9:q.e,bucket10:q.f};
+}
+export function validSilhouetteReceipt(receipt){
+  if(!receipt||receipt.g!=='silhouette-precision'||receipt.rv!==1||
+    !silhouetteMode(receipt.m)||!Number.isSafeInteger(receipt.e)||receipt.e!==2||
+    receipt.d!=='01'||receipt.p!==1||
+    !Number.isSafeInteger(receipt.t)||receipt.t<1704067200||receipt.t>4102444800)return false;
+  const metrics=normalizedSilhouetteMetrics(receipt.q);
+  return metrics!==null&&validSilhouetteMetrics(receipt.m,receipt.s,metrics);
+}
