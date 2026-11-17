@@ -1,5 +1,6 @@
 import { validR2Score } from './arcade-bullseye-r2.mjs';
 import { validR3Score,r3Streak } from './arcade-bullseye-r3.mjs';
+import { silhouetteMode,validSilhouetteRankRow } from './arcade-silhouette-r1.mjs';
 import { validZombieRankRow } from './arcade-zombie-campaign-v1.mjs';
 import {isExtraMode,validBullseyeExtra,supportedBullseye,timedSeconds} from './arcade-bullseye-modes-v1.mjs';
 /**
@@ -77,8 +78,9 @@ export async function handleVerifiedLeaderboard(req,env=process.env,fetcher=fetc
   let url;
   try{url=new URL(req.url);}catch{return answer(400,{error:'invalid_request'});}
   const params=url.searchParams;
+  const silhouette=params.get('game')==='silhouette-precision'&&silhouetteMode(params.get('mode'))&&params.get('rev')==='1';
   const zombie=params.get('game')==='zombie-outbreak'&&params.get('mode')==='campaign'&&params.get('rev')==='1';
-  if((!zombie && (params.get('game')!=='bullseye-classic'||
+  if((!zombie && !silhouette && (params.get('game')!=='bullseye-classic'||
     !supportedBullseye(params.get('mode'),params.get('rev')==='3'?3:params.get('rev')==='2'?2:1)))||
     (params.has('limit')&&!['3','50'].includes(params.get('limit')))||
     (params.has('rev')&&!['1','2','3'].includes(params.get('rev')))||
@@ -87,27 +89,28 @@ export async function handleVerifiedLeaderboard(req,env=process.env,fetcher=fetc
   const limit=params.get('limit')==='50'?50:3;
   const revision=params.get('rev')==='3'?3:params.get('rev')==='2'?2:1;
   const mode=params.get('mode');
+  if(silhouette && env.ARCADE_SILHOUETTE_R1_FEED!=='true')return answer(503,{error:'verified_rankings_unavailable'});
   if(zombie && env.ARCADE_ZOMBIE_CAMPAIGN_R1_FEED!=='true')return answer(503,{error:'verified_rankings_unavailable'});
   const project=projectOrigin(env.SUPABASE_URL);
   const secret=env.SUPABASE_SECRET_KEY;
   if(!project||typeof secret!=='string'||!/^sb_secret_[A-Za-z0-9_-]{12,}$/.test(secret))
     return answer(503,{error:'service_not_configured'});
   try {
-    const upstream=await fetcher(project+'/rest/v1/rpc/'+(zombie?'arcade_live_verified_leaderboard_zombie_campaign_v1':isExtraMode(mode,revision)?(revision===2?'arcade_live_verified_leaderboard_bullseye_modes_v2':'arcade_live_verified_leaderboard_bullseye_modes_v1'):revision===3?'arcade_live_verified_leaderboard_v3':revision===2?'arcade_live_verified_leaderboard_v2':'arcade_live_verified_leaderboard_v1'),{
+    const upstream=await fetcher(project+'/rest/v1/rpc/'+(silhouette?'arcade_live_verified_leaderboard_silhouette_v1':zombie?'arcade_live_verified_leaderboard_zombie_campaign_v1':isExtraMode(mode,revision)?(revision===2?'arcade_live_verified_leaderboard_bullseye_modes_v2':'arcade_live_verified_leaderboard_bullseye_modes_v1'):revision===3?'arcade_live_verified_leaderboard_v3':revision===2?'arcade_live_verified_leaderboard_v2':'arcade_live_verified_leaderboard_v1'),{
       method:'POST',redirect:'error',cache:'no-store',signal:AbortSignal.timeout(8000),
       headers:{apikey:secret,'content-type':'application/json',accept:'application/json'},
-      body:JSON.stringify({p_game_id:zombie?'zombie-outbreak':'bullseye-classic',p_mode_id:mode,p_scoring_revision:revision}),
+      body:JSON.stringify({p_game_id:silhouette?'silhouette-precision':zombie?'zombie-outbreak':'bullseye-classic',p_mode_id:mode,p_scoring_revision:revision}),
     });
     if(!upstream.ok)return answer(503,{error:'verified_rankings_unavailable'});
     const raw=await upstream.text();
     if(raw.length>30000)throw Error('oversized_upstream');
     const data=JSON.parse(raw);
-    if(data?.version!==1||data.gameId!==(zombie?'zombie-outbreak':'bullseye-classic')||data.modeId!==mode||
+    if(data?.version!==1||data.gameId!==(silhouette?'silhouette-precision':zombie?'zombie-outbreak':'bullseye-classic')||data.modeId!==mode||
       data.scoringRevision!==revision||!Array.isArray(data.rows)||data.rows.length>50)
       throw Error('invalid_upstream_shape');
     const seen=new Set();
     const validated=data.rows.map((row,i)=>{
-      const safe=zombie?(validZombieRankRow(row,i+1)?{rank:row.rank,nickname:row.nickname,score:row.score,timeMs:row.timeMs}:(()=>{throw Error('invalid_zombie_row')})()):publicRow(row,i+1,mode,revision);
+      const safe=silhouette?(validSilhouetteRankRow(row,i+1,mode)?{rank:row.rank,nickname:row.nickname,score:row.score,timeMs:row.timeMs,tenPointHits:row.tenPointHits,centerChestHits:row.centerChestHits}:(()=>{throw Error('invalid_silhouette_row')})()):zombie?(validZombieRankRow(row,i+1)?{rank:row.rank,nickname:row.nickname,score:row.score,timeMs:row.timeMs}:(()=>{throw Error('invalid_zombie_row')})()):publicRow(row,i+1,mode,revision);
       if(seen.has(safe.nickname.toLowerCase()))throw Error('duplicate_nickname');
       seen.add(safe.nickname.toLowerCase());
       return safe;
@@ -115,9 +118,9 @@ export async function handleVerifiedLeaderboard(req,env=process.env,fetcher=fetc
     const current=now();
     if(!(current instanceof Date)||!Number.isFinite(current.getTime()))throw Error('invalid_clock');
     return answer(200,{
-      schemaVersion:1,verified:true,gameId:zombie?'zombie-outbreak':'bullseye-classic',modeId:mode,
+      schemaVersion:1,verified:true,gameId:silhouette?'silhouette-precision':zombie?'zombie-outbreak':'bullseye-classic',modeId:mode,
       scoringRevision:revision,generatedAtUtc:current.toISOString(),
-      rankingOrder:zombie?['score_desc','qualified_headshots_desc','time_asc'] : mode==='perfect-100'?(revision===2?['score_desc','shots_asc','time_asc']:['shots_asc','time_asc','center_hits_desc']):
+      rankingOrder:silhouette?['score_desc','ten_point_hits_desc','center_chest_hits_desc','time_asc']:zombie?['score_desc','qualified_headshots_desc','time_asc'] : mode==='perfect-100'?(revision===2?['score_desc','shots_asc','time_asc']:['shots_asc','time_asc','center_hits_desc']):
        isExtraMode(mode,revision)?(revision===2?['score_desc','raw_points_desc','center_hits_desc','grouping_asc','shots_asc']:['score_desc','center_hits_desc','shots_asc']):
        revision>=2?['score_desc','raw_points_desc','center_hits_desc','time_asc','grouping_asc']:
         ['score_desc','raw_points_desc','center_hits_desc','grouping_asc','time_asc'],
