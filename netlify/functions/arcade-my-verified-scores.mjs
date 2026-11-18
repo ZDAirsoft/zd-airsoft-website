@@ -16,9 +16,10 @@ function safeReport(doc){
   if(!isObject(doc)||doc.version!==1||doc.maxRecent!==50||!Array.isArray(doc.recent)||
     !Array.isArray(doc.personalBests)||!Array.isArray(doc.lifetimeByMode)||
     doc.recent.length>50||doc.personalBests.length>50||doc.lifetimeByMode.length>50)throw Error('shape');
-  const silhouette=(r)=>isObject(r)&&r.gameId==='silhouette-precision'&&r.scoringRevision===1&&
+  const silhouette=(r)=>isObject(r)&&r.gameId==='silhouette-precision'&&[1,2].includes(r.scoringRevision)&&
     ['standard-10','standard-20','standard-30','timed-10','timed-20','timed-30','precision-10','precision-20','precision-30'].includes(r.modeId);
-  const silhouetteMetrics=(r,withImpacts)=>integer(r.score,0,1000000)&&
+  const silhouetteMetrics=(r,withImpacts)=>integer(r.score,0,r.scoringRevision===2?300:1000000)&&
+    (r.scoringRevision!==2||integer(r.groupingRating,0,1000))&&
     integer(r.timeMs,0,86400000)&&integer(r.tenPointHits,0,100000)&&
     integer(r.centerHits,0,r.tenPointHits)&&
     (!withImpacts||integer(r.registeredImpacts,1,100000));
@@ -38,8 +39,8 @@ function safeReport(doc){
     if(silhouette(r)){
       if(!silhouetteMetrics(r,true)||!integer(r.eventId,1,999999)||
         typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt)))throw Error('silhouette_recent');
-      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,eventId:r.eventId,
-        claimedAt:r.claimedAt,registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,eventId:r.eventId,
+        ...(r.scoringRevision===2?{groupingRating:r.groupingRating}:{}),claimedAt:r.claimedAt,registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,
         tenPointHits:r.tenPointHits,centerHits:r.centerHits};
     }
     if(zombie(r)){
@@ -67,13 +68,13 @@ function safeReport(doc){
     if(silhouette(r)){
       if(!silhouetteMetrics(r,false)||typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt)))
         throw Error('silhouette_best');
-      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,achievedAt:r.achievedAt,
-        timeMs:r.timeMs,tenPointHits:r.tenPointHits,centerHits:r.centerHits};
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,achievedAt:r.achievedAt,
+        ...(r.scoringRevision===2?{groupingRating:r.groupingRating}:{}),timeMs:r.timeMs,tenPointHits:r.tenPointHits,centerHits:r.centerHits};
     }
     if(zombie(r)){
       if(!integer(r.score,0,1000000)||typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt))||
         !zombieMetrics(r))throw Error('zombie_best');
-      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,achievedAt:r.achievedAt,
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,score:r.score,achievedAt:r.achievedAt,
         timeMs:r.timeMs,kills:r.kills,targetHits:r.targetHits,qualifiedHeadshots:r.qualifiedHeadshots,
         highestScene:r.highestScene,scenesCleared:r.scenesCleared,completed:r.completed};
     }
@@ -86,17 +87,17 @@ function safeReport(doc){
   const lifetimeByMode=doc.lifetimeByMode.map(r=>{
     if(silhouette(r)){
       if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
-        !integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER)||!integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
+        !(r.scoringRevision===2?r.totalRawPoints===null:integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER))||!integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
         !integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('silhouette_lifetime');
-      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,attempts:r.attempts,totalScore:r.totalScore,
-        totalRawPoints:r.totalRawPoints,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,attempts:r.attempts,totalScore:r.totalScore,
+        totalRawPoints:r.scoringRevision===2?null:r.totalRawPoints,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
     }
     if(zombie(r)){
       if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
         !integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER)||
         !integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
         !integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('zombie_lifetime');
-      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,attempts:r.attempts,totalScore:r.totalScore,
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:r.scoringRevision,attempts:r.attempts,totalScore:r.totalScore,
         totalRawPoints:r.totalRawPoints,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
     }
     if(!legitMode(r)||!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||
@@ -126,7 +127,7 @@ export async function handleMyVerifiedScores(req,env=process.env,fetcher=fetch){
     };
     const auth=await load('/auth/v1/user',pk);
     if(!auth.ok||!uuid.test(auth.json?.id))return answer(401,{error:'invalid_session'});
-    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v3',sk,'POST',{
+    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v4',sk,'POST',{
       p_auth_user_id:auth.json.id,
     });
     if(!result.ok)return answer(result.status===403?403:503,{error:'private_history_unavailable'});
