@@ -122,7 +122,10 @@ export async function handleMyVerifiedScores(req,env=process.env,fetcher=fetch){
         signal:AbortSignal.timeout(8000),headers:{apikey,'content-type':'application/json',accept:'application/json',
           ...(path==='/auth/v1/user'?{authorization:'Bearer '+token}:{})},
         ...(method==='POST'?{body:JSON.stringify(value)}:{})});
-      const raw=await res.text();if(raw.length>30000)throw Error('large_result');
+      // Bounded V4 report contains up to 50 recent, 50 best and 50 lifetime rows.
+      // The previous 30 KB guard rejected genuine long-standing player histories.
+      // Keep a finite 128 KiB safety ceiling, then validate/whitelist every returned row.
+      const raw=await res.text();if(raw.length>131072)throw Error('large_result');
       return {ok:res.ok,status:res.status,json:JSON.parse(raw)};
     };
     const auth=await load('/auth/v1/user',pk);
