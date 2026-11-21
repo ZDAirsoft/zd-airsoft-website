@@ -23,6 +23,13 @@ function safeReport(doc){
     integer(r.timeMs,0,86400000)&&integer(r.tenPointHits,0,100000)&&
     integer(r.centerHits,0,r.tenPointHits)&&
     (!withImpacts||integer(r.registeredImpacts,1,100000));
+  const hostage=(r)=>isObject(r)&&r.gameId==='hostage-rescue'&&r.scoringRevision===3&&
+    ['classic-rescue-easy','classic-rescue-normal','classic-rescue-hard','no-mistakes-easy','no-mistakes-normal','no-mistakes-hard',
+      'timed-45s-easy','timed-45s-normal','timed-45s-hard'].includes(r.modeId);
+  const hostageMetrics=(r,hasShots)=>integer(r.score,0,300)&&integer(r.timeMs,0,86400000)&&
+    integer(r.threatHits,0,12)&&integer(r.protectedHits,0,100)&&integer(r.misses,0,100)&&
+    integer(r.correctHolds,0,2)&&integer(r.failedScenes,0,10)&&
+    (!hasShots||(integer(r.registeredImpacts,0,100)&&r.registeredImpacts===r.threatHits+r.protectedHits+r.misses));
   const zombie=(r)=>isObject(r)&&r.gameId==='zombie-outbreak'&&r.modeId==='campaign'&&r.scoringRevision===1;
   const zombieMetrics=(r)=>integer(r.kills,50,50)&&integer(r.targetHits,50,10000)&&
     integer(r.qualifiedHeadshots,0,r.targetHits)&&integer(r.highestScene,5,5)&&
@@ -36,6 +43,12 @@ function safeReport(doc){
   const impactsMax=(r)=>r.modeId==='ten-shot'?10:512;
   const timeMax=(r)=>r.modeId==='ten-shot'?600000:3600000;
   const recent=doc.recent.map(r=>{
+    if(hostage(r)){
+      if(!hostageMetrics(r,true)||!integer(r.eventId,1,999999)||typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt)))throw Error('hostage_recent');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:3,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
+        registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,threatHits:r.threatHits,protectedHits:r.protectedHits,
+        misses:r.misses,correctHolds:r.correctHolds,failedScenes:r.failedScenes};
+    }
     if(silhouette(r)){
       if(!silhouetteMetrics(r,true)||!integer(r.eventId,1,999999)||
         typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt)))throw Error('silhouette_recent');
@@ -65,6 +78,12 @@ function safeReport(doc){
       timeMs:r.timeMs,groupingBonus:r.groupingBonus,speedBonus:r.speedBonus};
   });
   const personalBests=doc.personalBests.map(r=>{
+    if(hostage(r)){
+      if(!hostageMetrics(r,false)||typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt)))throw Error('hostage_best');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:3,score:r.score,achievedAt:r.achievedAt,
+        timeMs:r.timeMs,threatHits:r.threatHits,protectedHits:r.protectedHits,misses:r.misses,
+        correctHolds:r.correctHolds,failedScenes:r.failedScenes};
+    }
     if(silhouette(r)){
       if(!silhouetteMetrics(r,false)||typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt)))
         throw Error('silhouette_best');
@@ -85,6 +104,13 @@ function safeReport(doc){
       rawPoints:r.rawPoints,centerHits:r.centerHits,timeMs:r.timeMs};
   });
   const lifetimeByMode=doc.lifetimeByMode.map(r=>{
+    if(hostage(r)){
+      if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
+        r.totalRawPoints!==null||!integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
+        !integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('hostage_lifetime');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:3,attempts:r.attempts,totalScore:r.totalScore,
+        totalRawPoints:null,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
+    }
     if(silhouette(r)){
       if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
         !(r.scoringRevision===2?r.totalRawPoints===null:integer(r.totalRawPoints,0,Number.MAX_SAFE_INTEGER))||!integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
@@ -130,7 +156,7 @@ export async function handleMyVerifiedScores(req,env=process.env,fetcher=fetch){
     };
     const auth=await load('/auth/v1/user',pk);
     if(!auth.ok||!uuid.test(auth.json?.id))return answer(401,{error:'invalid_session'});
-    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v4',sk,'POST',{
+    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v5',sk,'POST',{
       p_auth_user_id:auth.json.id,
     });
     if(!result.ok)return answer(result.status===403?403:503,{error:'private_history_unavailable'});
