@@ -12,6 +12,7 @@ import { validSilhouetteReceipt, normalizedSilhouetteMetrics } from './arcade-si
 import { validSilhouetteR2Receipt, normalizeSilhouetteR2Metrics } from './arcade-silhouette-r2.mjs';
 import {supportedBullseye,isExtraMode,validBullseyeExtra} from './arcade-bullseye-modes-v1.mjs';
 import {validHostageReceipt,normalizeHostageMetrics} from './arcade-hostage-v3.mjs';
+import {validWildHuntReceipt,normalizeWildHuntMetrics} from './arcade-wild-hunt-v1.mjs';
 
 const SIGNING_DOMAIN = Buffer.from('ZDAIRSOFT_SCORE_V1\0', 'utf8');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -130,7 +131,7 @@ export function verifyRegisteredReceipt(parsed, record, nowSec) {
     if(record.publicKeySha256!==fp)return {ok:false,code:'registry_fingerprint_mismatch'};
     if(!verifySignature('sha256',Buffer.concat([SIGNING_DOMAIN,payload]),
       {key:publicKey,dsaEncoding:'ieee-p1363'},signature))return {ok:false,code:'invalid_signature'};
-    if(!(validateBullseye(r)||validZombieCampaignV1(r)||validSilhouetteReceipt(r)||validSilhouetteR2Receipt(r)||validHostageReceipt(r)))return {ok:false,code:'unsupported_result'};
+    if(!(validateBullseye(r)||validZombieCampaignV1(r)||validSilhouetteReceipt(r)||validSilhouetteR2Receipt(r)||validHostageReceipt(r)||validWildHuntReceipt(r)))return {ok:false,code:'unsupported_result'};
     const start=Date.parse(record.startsAt),end=Date.parse(record.endsAt);
     if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return {ok:false,code:'invalid_event_window'};
     if(record.keyStatus!=='active'||record.eventStatus!=='active'&&record.eventStatus!=='closed')
@@ -164,7 +165,7 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     (body.mode!=='verify'&&body.mode!=='claim'))return deny(400,'invalid_request');
   let parsed;
   try {parsed=parseSignedWire(body.wire);}catch{return deny(422,'malformed_receipt');}
-  if(!(validateBullseye(parsed.receipt)||validZombieCampaignV1(parsed.receipt)||validSilhouetteReceipt(parsed.receipt)||validSilhouetteR2Receipt(parsed.receipt)||validHostageReceipt(parsed.receipt)))return deny(422,'unsupported_result');
+  if(!(validateBullseye(parsed.receipt)||validZombieCampaignV1(parsed.receipt)||validSilhouetteReceipt(parsed.receipt)||validSilhouetteR2Receipt(parsed.receipt)||validHostageReceipt(parsed.receipt)||validWildHuntReceipt(parsed.receipt)))return deny(422,'unsupported_result');
   const fetchJson=async(path,key,method='POST',data)=>{
     const response=await fetcher(project+path,{method,redirect:'error',cache:'no-store',
       headers:{apikey:key,'content-type':'application/json',accept:'application/json',
@@ -193,16 +194,17 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     const silhouette=validSilhouetteReceipt(verified.receipt);
     const silhouetteR2=validSilhouetteR2Receipt(verified.receipt);
     const hostage=validHostageReceipt(verified.receipt);
+    const wildHunt=validWildHuntReceipt(verified.receipt);
     const pilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
       env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1 &&
-      (hostage ? true : silhouetteR2 ? env.ARCADE_SILHOUETTE_R2_PILOT==='true' : silhouette ? env.ARCADE_SILHOUETTE_R1_PILOT==='true' : zombie ? env.ARCADE_ZOMBIE_CAMPAIGN_R1_PILOT==='true' : isExtraMode(verified.receipt.m,verified.receipt.rv)?
+      (wildHunt ? env.ARCADE_WILD_HUNT_R1_PILOT==='true' : hostage ? true : silhouetteR2 ? env.ARCADE_SILHOUETTE_R2_PILOT==='true' : silhouette ? env.ARCADE_SILHOUETTE_R1_PILOT==='true' : zombie ? env.ARCADE_ZOMBIE_CAMPAIGN_R1_PILOT==='true' : isExtraMode(verified.receipt.m,verified.receipt.rv)?
         (verified.receipt.rv===2 ? env.ARCADE_BULLSEYE_ACCURACY_R2_PILOT==='true' : env.ARCADE_BULLSEYE_ALL_MODES_PILOT==='true'):
         verified.receipt.rv===1 || (verified.receipt.rv===2 && env.ARCADE_SIGNED_R2_ENABLED==='true') ||
         (verified.receipt.rv===3 && env.ARCADE_BULLSEYE_STREAK_R3_PILOT==='true'));
     if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
       gameId:verified.receipt.g,modeId:verified.receipt.m,score:verified.receipt.s,metrics:verified.receipt.q});
     if(!pilotEnabled)return deny(503,'signed_claims_not_activated');
-    const result=await fetchJson(endpoint+(hostage?'arcade_live_signed_claim_hostage_v3':silhouetteR2?'arcade_live_signed_claim_silhouette_v2':silhouette?'arcade_live_signed_claim_silhouette_v1':zombie?'arcade_live_signed_claim_zombie_campaign_v1':isExtraMode(verified.receipt.m,verified.receipt.rv)?(verified.receipt.rv===2?'arcade_live_signed_claim_bullseye_modes_v2':'arcade_live_signed_claim_bullseye_modes_v1'):
+    const result=await fetchJson(endpoint+(wildHunt?'arcade_live_signed_claim_wildhunt_v1':hostage?'arcade_live_signed_claim_hostage_v3':silhouetteR2?'arcade_live_signed_claim_silhouette_v2':silhouette?'arcade_live_signed_claim_silhouette_v1':zombie?'arcade_live_signed_claim_zombie_campaign_v1':isExtraMode(verified.receipt.m,verified.receipt.rv)?(verified.receipt.rv===2?'arcade_live_signed_claim_bullseye_modes_v2':'arcade_live_signed_claim_bullseye_modes_v1'):
       verified.receipt.rv===3?'arcade_live_signed_claim_v3':verified.receipt.rv===2?'arcade_live_signed_claim_v2':'arcade_live_signed_claim_v1'),sk,'POST',{
       p_auth_user_id:auth.data.id,p_result_id:verified.receipt.r,p_event_id:verified.receipt.e,
       p_monitor_id:verified.receipt.d,p_key_id:verified.receipt.k,
@@ -210,7 +212,7 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
       p_payload_sha256_hex:verified.digest,p_public_key_sha256_hex:verified.publicKeySha256,
       p_game_id:verified.receipt.g,p_mode_id:verified.receipt.m,
       p_scoring_revision:verified.receipt.rv,p_score:verified.receipt.s,
-      p_device_unix_seconds:verified.receipt.t,p_metrics:hostage?normalizeHostageMetrics(verified.receipt.q):silhouetteR2?normalizeSilhouetteR2Metrics(verified.receipt.q):silhouette?normalizedSilhouetteMetrics(verified.receipt.q):zombie?normalizedZombieMetrics(verified.receipt.q):verified.receipt.rv===3?
+      p_device_unix_seconds:verified.receipt.t,p_metrics:wildHunt?normalizeWildHuntMetrics(verified.receipt.q):hostage?normalizeHostageMetrics(verified.receipt.q):silhouetteR2?normalizeSilhouetteR2Metrics(verified.receipt.q):silhouette?normalizedSilhouetteMetrics(verified.receipt.q):zombie?normalizedZombieMetrics(verified.receipt.q):verified.receipt.rv===3?
         {...Object.fromEntries(Object.entries(verified.receipt.q).filter(([name])=>name!=='gm'&&name!=='st')),
           ...(verified.receipt.q.gm===undefined?{}:{group_mean_x100:verified.receipt.q.gm}),
           longest_streak:verified.receipt.q.st}:verified.receipt.rv===2?
