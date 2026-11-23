@@ -23,6 +23,15 @@ function safeReport(doc){
     integer(r.timeMs,0,86400000)&&integer(r.tenPointHits,0,100000)&&
     integer(r.centerHits,0,r.tenPointHits)&&
     (!withImpacts||integer(r.registeredImpacts,1,100000));
+  const wildHunt=(r)=>isObject(r)&&r.gameId==='wild-hunt'&&r.scoringRevision===1&&
+    ['easy','medium','hard'].includes(r.modeId);
+  const wildHuntMetrics=(r,withImpacts)=>{
+    const hard=r.modeId==='hard', goal=hard?50:25, cap=hard?50:r.modeId==='medium'?125:250;
+    return integer(r.score,0,hard?29200:2147483647)&&integer(r.timeMs,0,2147483647)&&
+      integer(r.harvests,goal,goal)&&integer(r.vitalHits,0,cap)&&integer(r.coverHits,0,cap)&&
+      integer(r.basePoints,0,2147483647)&&integer(r.sasquatchUplift,0,2147483647)&&
+      (!withImpacts||(integer(r.registeredImpacts,goal,cap)&&r.vitalHits<=r.registeredImpacts));
+  };
   const hostage=(r)=>isObject(r)&&r.gameId==='hostage-rescue'&&r.scoringRevision===3&&
     ['classic-rescue-easy','classic-rescue-normal','classic-rescue-hard','no-mistakes-easy','no-mistakes-normal','no-mistakes-hard',
       'timed-45s-easy','timed-45s-normal','timed-45s-hard'].includes(r.modeId);
@@ -43,6 +52,13 @@ function safeReport(doc){
   const impactsMax=(r)=>r.modeId==='ten-shot'?10:512;
   const timeMax=(r)=>r.modeId==='ten-shot'?600000:3600000;
   const recent=doc.recent.map(r=>{
+    if(wildHunt(r)){
+      if(!wildHuntMetrics(r,true)||!integer(r.eventId,1,999999)||
+        typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt)))throw Error('wildhunt_recent');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
+        registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,harvests:r.harvests,vitalHits:r.vitalHits,
+        coverHits:r.coverHits,basePoints:r.basePoints,sasquatchUplift:r.sasquatchUplift};
+    }
     if(hostage(r)){
       if(!hostageMetrics(r,true)||!integer(r.eventId,1,999999)||typeof r.claimedAt!=='string'||!Number.isFinite(Date.parse(r.claimedAt)))throw Error('hostage_recent');
       return {gameId:r.gameId,modeId:r.modeId,scoringRevision:3,score:r.score,eventId:r.eventId,claimedAt:r.claimedAt,
@@ -78,6 +94,13 @@ function safeReport(doc){
       timeMs:r.timeMs,groupingBonus:r.groupingBonus,speedBonus:r.speedBonus};
   });
   const personalBests=doc.personalBests.map(r=>{
+    if(wildHunt(r)){
+      if(!wildHuntMetrics(r,false)||!integer(r.registeredImpacts,25,r.modeId==='hard'?50:r.modeId==='medium'?125:250)||
+        typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt)))throw Error('wildhunt_best');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,achievedAt:r.achievedAt,
+        registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,harvests:r.harvests,vitalHits:r.vitalHits,
+        coverHits:r.coverHits,basePoints:r.basePoints,sasquatchUplift:r.sasquatchUplift};
+    }
     if(hostage(r)){
       if(!hostageMetrics(r,false)||typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt)))throw Error('hostage_best');
       return {gameId:r.gameId,modeId:r.modeId,scoringRevision:3,score:r.score,achievedAt:r.achievedAt,
@@ -104,6 +127,13 @@ function safeReport(doc){
       rawPoints:r.rawPoints,centerHits:r.centerHits,timeMs:r.timeMs};
   });
   const lifetimeByMode=doc.lifetimeByMode.map(r=>{
+    if(wildHunt(r)){
+      if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
+        r.totalRawPoints!==null||!integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
+        !integer(r.centerHits,0,Number.MAX_SAFE_INTEGER))throw Error('wildhunt_lifetime');
+      return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,attempts:r.attempts,totalScore:r.totalScore,
+        totalRawPoints:null,registeredImpacts:r.registeredImpacts,centerHits:r.centerHits};
+    }
     if(hostage(r)){
       if(!integer(r.attempts,0,Number.MAX_SAFE_INTEGER)||!integer(r.totalScore,0,Number.MAX_SAFE_INTEGER)||
         r.totalRawPoints!==null||!integer(r.registeredImpacts,0,Number.MAX_SAFE_INTEGER)||
@@ -156,7 +186,7 @@ export async function handleMyVerifiedScores(req,env=process.env,fetcher=fetch){
     };
     const auth=await load('/auth/v1/user',pk);
     if(!auth.ok||!uuid.test(auth.json?.id))return answer(401,{error:'invalid_session'});
-    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v5',sk,'POST',{
+    const result=await load('/rest/v1/rpc/arcade_live_my_verified_scorecard_v6',sk,'POST',{
       p_auth_user_id:auth.json.id,
     });
     if(!result.ok)return answer(result.status===403?403:503,{error:'private_history_unavailable'});
