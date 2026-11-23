@@ -13,13 +13,18 @@ test('Wild Hunt revision 1 private modes and hard only victory bounds',()=>{
  assert.equal(validWildHuntReceipt(r('medium',{...q,imp:25,hit:25,vital:25,har:25})),true);
  assert.equal(validWildHuntReceipt(r('easy',{...q,imp:25,hit:25,vital:25,har:25})),true);
  assert.equal(validWildHuntReceipt(r('hard',{...q,imp:49})),false);
- assert.equal(validWildHuntReceipt(r('hard',{...q,pro:1})),false);
- assert.equal(validWildHuntReceipt(r('hard',{...q,sq:1})),false);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,imp:51,miss:1})),true);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,imp:52,hit:51,miss:1,sq:25},22025)),true);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,imp:51,pro:1},21850)),true);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,sq:1},22001)),true);
  assert.equal(validWildHuntReceipt(r('hard',{...q,har:49})),false);
  assert.equal(validWildHuntReceipt(r('hard',{...q,stage:4})),false);
  assert.equal(validWildHuntReceipt(r('hard',{...q,base:22001})),false);
  assert.equal(validWildHuntReceipt(r('hard',{...q,extra:1})),false);
- assert.equal(validWildHuntReceipt(r('hard',q,29201)),false);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,imp:101})),false);
+ assert.equal(validWildHuntReceipt(r('hard',q,100001)),false);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,base:56701},56701)),false);
+ assert.equal(validWildHuntReceipt(r('hard',{...q,sq:42579},64579)),false);
  assert.deepEqual(normalizeWildHuntMetrics(q),q);
 });
 
