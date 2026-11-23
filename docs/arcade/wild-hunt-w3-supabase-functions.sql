@@ -1,5 +1,5 @@
--- Wild Hunt W3 — exact snapshots of live Supabase function definitions
--- Generated 2026-11-22; includes staff removal compatibility change.
+-- Wild Hunt W3.2 — updated snapshots of live Supabase function definitions
+-- Updated 2026-11-23; includes staff removal compatibility change.
 -- This is a backup, not a permission to enable wild-hunt signing.
 
 -- public.arcade_live_signed_claim_wildhunt_v1(uuid,uuid,bigint,text,text,text,text,text,text,text,text,integer,integer,bigint,jsonb)
@@ -20,7 +20,7 @@ BEGIN
  OR p_mode_id IS NULL OR p_mode_id NOT IN ('easy','medium','hard')
  OR p_scoring_revision IS DISTINCT FROM 1
  OR p_score IS NULL OR p_score<0 OR
- (p_mode_id='hard' AND p_score>29200)
+ (p_mode_id='hard' AND p_score>100000)
  OR p_key_id IS NULL OR p_key_id !~ '^K[0-9A-F]{16}$'
  OR p_device_unix_seconds IS NULL OR p_device_unix_seconds NOT BETWEEN 1704067200 AND 4102444800
  OR p_payload_hex IS NULL OR p_payload_hex !~ '^[0-9a-f]+$'
@@ -46,7 +46,7 @@ BEGIN
  v_win:=(p_metrics->>'win')::integer;v_time:=(p_metrics->>'time')::integer;
  v_har:=(p_metrics->>'har')::integer;v_cov:=(p_metrics->>'cov')::integer;
  v_base:=(p_metrics->>'base')::integer;v_sq:=(p_metrics->>'sq')::integer;
- v_cap:=CASE p_mode_id WHEN 'easy' THEN 250 WHEN 'medium' THEN 125 ELSE 50 END;
+ v_cap:=CASE p_mode_id WHEN 'easy' THEN 250 WHEN 'medium' THEN 125 ELSE 100 END;
  v_harvest_goal:=CASE WHEN p_mode_id='hard' THEN 50 ELSE 25 END;
  IF v_imp NOT BETWEEN v_harvest_goal AND v_cap OR
    v_hit>v_imp OR v_vital>v_hit OR v_har>v_hit OR
@@ -54,8 +54,7 @@ BEGIN
    v_stage<>5 OR v_win<>1 OR v_har<>v_harvest_goal OR
    v_time>2147483647 OR
    p_score::bigint<>v_base::bigint+v_sq::bigint-(150::bigint*v_pro) OR
-   (p_mode_id='hard' AND (v_imp<>50 OR v_hit<>50 OR v_har<>50
-      OR v_miss<>0 OR v_cov<>0 OR v_pro<>0 OR v_sq<>0))
+   (p_mode_id='hard' AND (v_imp NOT BETWEEN 50 AND 100 OR v_hit<50 OR v_har<>50))
  THEN RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='wildhunt_metric_bounds';END IF;
  SELECT status,public_key_sha256,monitor_code INTO v_key
  FROM arcade_live_private.arcade_monitor_signing_keys WHERE key_id=p_key_id FOR SHARE;
@@ -117,6 +116,7 @@ BEGIN
  ORDER BY claimed_at DESC,result_id DESC OFFSET 50);
  RETURN jsonb_build_object('outcome','created');
 END $function$;
+
 
 -- public.arcade_live_verified_leaderboard_wildhunt_v1(text,text,integer)
 CREATE OR REPLACE FUNCTION public.arcade_live_verified_leaderboard_wildhunt_v1(p_game_id text, p_mode_id text, p_scoring_revision integer)
