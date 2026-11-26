@@ -204,7 +204,7 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     // Fleet scope 3 is an internal permanent trust policy, not a recurring event.
     // All game score validators, per-key status checks, consent and replay RPCs remain unchanged.
     const fleetEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
-      env.ARCADE_FLEET_CLAIMS_ENABLED==='true' && verified.receipt.e===3 && verified.receipt.p===1 &&
+      env.ARCADE_FLEET_CLAIMS_ENABLED==='true' && verified.receipt.e===3 && verified.receipt.p===undefined &&
       pre.data.keyStatus==='active' && pre.data.eventStatus==='active';
     const pilotEnabled=legacyPilotEnabled||fleetEnabled;
     if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
