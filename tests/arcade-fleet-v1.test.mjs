@@ -45,3 +45,31 @@ test('owner-only endpoint requires a Supabase bearer token',async()=>{
  assert.equal(response.status,401);
  assert.equal(calls,0);
 });
+
+test('successful proof automatically assigns station without staff login',async()=>{
+ const calls=[];
+ const env={ARCADE_FLEET_ENROLLMENT_V1:'true',
+   SUPABASE_URL:'https://test.supabase.co',
+   SUPABASE_SECRET_KEY:'sb_secret_abcdefghijklmnop',
+   SUPABASE_PUBLISHABLE_KEY:'sb_publishable_abcdefghijklmnop'};
+ const req=new Request('https://zdairsoft.com/arcade/api/fleet-v1',{
+   method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+ const fakeFetch=async(url,opts)=>{
+   const fn=String(url).split('/').pop();calls.push(fn);
+   const data=fn==='arcade_fleet_challenge_check_v1'?challenge:
+     fn==='arcade_fleet_record_proof_v1'?{keyId,status:'pending'}:
+     fn==='arcade_fleet_autoadmit_v1'?{keyId,status:'approved',monitorId:'03'}:null;
+   if(data===null)throw Error('unexpected RPC '+fn);
+   return new Response(JSON.stringify(data),{status:200});
+ };
+ const result=await handleFleetV1(req,env,fakeFetch);
+ assert.equal(result.status,200);
+ assert.deepEqual(calls,[
+  'arcade_fleet_challenge_check_v1',
+  'arcade_fleet_record_proof_v1',
+  'arcade_fleet_autoadmit_v1'
+ ]);
+ const out=await result.json();
+ assert.equal(out.status,'approved');
+ assert.equal(out.monitorId,'03');
+});
