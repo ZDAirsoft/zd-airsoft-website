@@ -195,13 +195,13 @@ export async function handleSignedClaim(request, env=process.env, fetcher=fetch,
     const silhouetteR2=validSilhouetteR2Receipt(verified.receipt);
     const hostage=validHostageReceipt(verified.receipt);
     const wildHunt=validWildHuntReceipt(verified.receipt);
-    const pilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
+    const legacyPilotEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&
       env.ARCADE_SIGNED_TEST_EVENT_ID==='2' && verified.receipt.e===2 && verified.receipt.p===1 &&
       (wildHunt ? env.ARCADE_WILD_HUNT_R1_PILOT==='true' : hostage ? true : silhouetteR2 ? env.ARCADE_SILHOUETTE_R2_PILOT==='true' : silhouette ? env.ARCADE_SILHOUETTE_R1_PILOT==='true' : zombie ? env.ARCADE_ZOMBIE_CAMPAIGN_R1_PILOT==='true' : isExtraMode(verified.receipt.m,verified.receipt.rv)?
         (verified.receipt.rv===2 ? env.ARCADE_BULLSEYE_ACCURACY_R2_PILOT==='true' : env.ARCADE_BULLSEYE_ALL_MODES_PILOT==='true'):
         verified.receipt.rv===1 || (verified.receipt.rv===2 && env.ARCADE_SIGNED_R2_ENABLED==='true') ||
         (verified.receipt.rv===3 && env.ARCADE_BULLSEYE_STREAK_R3_PILOT==='true'));
-    if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
+    // Fleet scope 3 is an internal permanent trust policy, not a recurring event.\n    // All game score validators, per-key status checks, consent and replay RPCs remain unchanged.\n    const fleetEnabled=env.ARCADE_SIGNED_CLAIMS_ENABLED==='true' &&\n      env.ARCADE_FLEET_CLAIMS_ENABLED==='true' && verified.receipt.e===3 && verified.receipt.p===1 &&\n      pre.data.keyStatus==='active' && pre.data.eventStatus==='active';\n    const pilotEnabled=legacyPilotEnabled||fleetEnabled;\n    if(body.mode==='verify')return reply(200,{status:'verified_only',signatureValid:true,claimable:pilotEnabled,
       gameId:verified.receipt.g,modeId:verified.receipt.m,score:verified.receipt.s,metrics:verified.receipt.q});
     if(!pilotEnabled)return deny(503,'signed_claims_not_activated');
     const result=await fetchJson(endpoint+(wildHunt?'arcade_live_signed_claim_wildhunt_v1':hostage?'arcade_live_signed_claim_hostage_v3':silhouetteR2?'arcade_live_signed_claim_silhouette_v2':silhouette?'arcade_live_signed_claim_silhouette_v1':zombie?'arcade_live_signed_claim_zombie_campaign_v1':isExtraMode(verified.receipt.m,verified.receipt.rv)?(verified.receipt.rv===2?'arcade_live_signed_claim_bullseye_modes_v2':'arcade_live_signed_claim_bullseye_modes_v1'):
