@@ -367,3 +367,58 @@ INSERT INTO arcade_live_private.arcade_event_monitors(event_id,monitor_id,key_id
  SELECT 3,monitor_id,key_id FROM arcade_live_private.arcade_fleet_devices WHERE status='approved'
  ON CONFLICT(event_id,key_id) DO NOTHING;
 -- Do not activate scope 3 until Launcher + website verification, review and owner go-live.
+
+-- Owner-approved operating policy: automatically admit at most five independently verified keys.
+CREATE OR REPLACE FUNCTION public.arcade_fleet_autoadmit_v1(p_key_id text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE req arcade_live_private.arcade_fleet_pairing_requests%ROWTYPE;
+ old_status text; assigned text; n integer;
+BEGIN
+ IF p_key_id !~ '^K[0-9A-F]{16}$' THEN
+  RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='fleet_key_invalid';
+ END IF;
+ PERFORM pg_catalog.pg_advisory_xact_lock(720035,1);
+ SELECT * INTO req FROM arcade_live_private.arcade_fleet_pairing_requests
+ WHERE key_id=p_key_id FOR UPDATE;
+ IF NOT FOUND OR req.last_proven_at < clock_timestamp()-interval '10 minutes'
+    OR req.status='rejected' THEN
+  RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='fleet_proof_required';
+ END IF;
+ SELECT status,monitor_id INTO old_status,assigned
+ FROM arcade_live_private.arcade_fleet_devices WHERE key_id=p_key_id FOR UPDATE;
+ IF old_status='revoked' THEN
+  RAISE EXCEPTION USING ERRCODE='42501',MESSAGE='fleet_device_revoked';
+ END IF;
+ IF old_status='approved' THEN
+  RETURN jsonb_build_object('keyId',p_key_id,'status','approved','monitorId',assigned);
+ END IF;
+ IF (SELECT count(*) FROM arcade_live_private.arcade_fleet_devices WHERE status='approved') >= 5
+ THEN RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='fleet_capacity_five_reached'; END IF;
+ assigned:=null;
+ FOR n IN 1..5 LOOP
+  IF NOT EXISTS(SELECT 1 FROM arcade_live_private.arcade_monitor_signing_keys
+                WHERE monitor_code=lpad(n::text,2,'0'))
+   AND NOT EXISTS(SELECT 1 FROM arcade_live_private.arcade_fleet_devices
+                  WHERE monitor_id=lpad(n::text,2,'0'))
+  THEN assigned:=lpad(n::text,2,'0'); EXIT; END IF;
+ END LOOP;
+ IF assigned IS NULL THEN
+  RAISE EXCEPTION USING ERRCODE='22023',MESSAGE='fleet_capacity_five_reached';
+ END IF;
+ INSERT INTO arcade_live_private.arcade_monitor_signing_keys
+   (key_id,public_key_spki_der,public_key_sha256,monitor_code,status,activated_at)
+ VALUES(req.key_id,req.public_key_spki_der,req.public_key_sha256,assigned,'active',clock_timestamp());
+ INSERT INTO arcade_live_private.arcade_fleet_devices(key_id,monitor_id,status)
+ VALUES(p_key_id,assigned,'approved');
+ UPDATE arcade_live_private.arcade_fleet_pairing_requests
+  SET status='approved',monitor_id=assigned WHERE key_id=p_key_id;
+ RETURN jsonb_build_object('keyId',p_key_id,'status','approved','monitorId',assigned);
+END;
+$function$
+;
+REVOKE ALL ON FUNCTION public.arcade_fleet_autoadmit_v1(text) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.arcade_fleet_autoadmit_v1(text) TO service_role;
