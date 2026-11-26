@@ -67,7 +67,11 @@ export async function handleFleetV1(request,env=process.env,fetcher=fetch){
       const challenge=await rpc('arcade_fleet_challenge_check_v1',{p_challenge_id:body.challengeId,p_key_id:body.keyId});
       if(!verifyFleetEnrollmentProof(body,challenge))return error(422,'invalid_proof');
       const out=await rpc('arcade_fleet_record_proof_v1',{p_challenge_id:body.challengeId,p_key_id:body.keyId,p_public_spki_hex:body.publicKeyHex});
-      return answer(200,{ok:true,...out});
+      // Z&D owns five private monitors. Successful cryptographic proof is sufficient
+      // for automatic admission while the five-station capacity has room.
+      // Server-only RPC assigns 01..05, enforces capacity and preserves revocations.
+      const admission=await rpc('arcade_fleet_autoadmit_v1',{p_key_id:body.keyId});
+      return answer(200,{ok:true,...admission});
     }
     if(!['pending','approve','revoke'].includes(body.action))return error(400,'unknown_action');
     if(body.action==='pending'&&Object.keys(body).sort().join(',')!=='action')return error(400,'invalid_fields');
