@@ -1,0 +1,21 @@
+name: Arcade Fleet V1 Tests
+on:
+  push:
+    branches: [arcade/fleet-v1-enrollment-staged]
+  pull_request:
+    paths:
+      - "netlify/functions/arcade-fleet-v1.mjs"
+      - "netlify/functions/arcade-signed-claim.mjs"
+      - "tests/arcade-fleet-v1.test.mjs"
+jobs:
+  node-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Focused fleet and Wild Hunt tests
+        run: node --test tests/arcade-fleet-v1.test.mjs tests/arcade-wild-hunt-v1.test.mjs
