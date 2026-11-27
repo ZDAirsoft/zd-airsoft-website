@@ -95,10 +95,10 @@ export async function handleVerifiedLeaderboard(req,env=process.env,fetcher=fetc
   const limit=params.get('limit')==='50'?50:3;
   const revision=params.get('rev')==='3'?3:params.get('rev')==='2'?2:1;
   const mode=params.get('mode');
-  if(silhouetteR2 && env.ARCADE_SILHOUETTE_R2_FEED!=='true')return answer(503,{error:'verified_rankings_unavailable'});
-  if(silhouette && !silhouetteR2 && env.ARCADE_SILHOUETTE_R1_FEED!=='true')return answer(503,{error:'verified_rankings_unavailable'});
-  if(zombie && env.ARCADE_ZOMBIE_CAMPAIGN_R1_FEED!=='true')return answer(503,{error:'verified_rankings_unavailable'});
-  if(wildHunt && env.ARCADE_WILD_HUNT_R1_FEED!=='true')return answer(503,{error:'verified_rankings_unavailable'});
+  if(silhouetteR2 && (env.ARCADE_SILHOUETTE_R2_FEED!=='true' && env.ARCADE_FLEET_CLAIMS_ENABLED!=='true'))return answer(503,{error:'verified_rankings_unavailable'});
+  if(silhouette && !silhouetteR2 && (env.ARCADE_SILHOUETTE_R1_FEED!=='true' && env.ARCADE_FLEET_CLAIMS_ENABLED!=='true'))return answer(503,{error:'verified_rankings_unavailable'});
+  if(zombie && (env.ARCADE_ZOMBIE_CAMPAIGN_R1_FEED!=='true' && env.ARCADE_FLEET_CLAIMS_ENABLED!=='true'))return answer(503,{error:'verified_rankings_unavailable'});
+  if(wildHunt && (env.ARCADE_WILD_HUNT_R1_FEED!=='true' && env.ARCADE_FLEET_CLAIMS_ENABLED!=='true'))return answer(503,{error:'verified_rankings_unavailable'});
   const project=projectOrigin(env.SUPABASE_URL);
   const secret=env.SUPABASE_SECRET_KEY;
   if(!project||typeof secret!=='string'||!/^sb_secret_[A-Za-z0-9_-]{12,}$/.test(secret))
