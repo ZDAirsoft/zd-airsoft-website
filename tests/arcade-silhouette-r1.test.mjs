@@ -18,6 +18,10 @@ test('tampered metrics, precision rules, and wrong pilot identity rejected',()=>
   assert.equal(validSilhouetteReceipt({...receipt,q:{...metrics,e:5}}),false);
   assert.equal(validSilhouetteReceipt({...receipt,p:undefined}),false);
   assert.equal(validSilhouetteReceipt({...receipt,e:3}),false);
+  assert.equal(validSilhouetteReceipt({...receipt,e:3,d:'02',p:undefined}),true);
+  assert.equal(validSilhouetteReceipt({...receipt,e:3,d:'02',p:1}),false);
+  assert.equal(validSilhouetteReceipt({...receipt,e:3,d:'00',p:undefined}),false);
+  assert.equal(validSilhouetteReceipt({...receipt,e:2,d:'02',p:1}),false);
   assert.equal(validSilhouetteReceipt({...receipt,q:{...metrics,c:3}}),false);
   const p={s:10,h:3,t:3,c:3,m:5000,a:7,b:0,d:0,e:0,f:3};
   assert.equal(validSilhouetteReceipt({...receipt,m:'precision-10',s:30,q:p}),true);
