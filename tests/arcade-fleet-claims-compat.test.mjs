@@ -26,11 +26,11 @@ test('SQL migration keeps event-2 pilot checks and adds scope-3 compatible claim
  const sql=readFileSync(new URL('../docs/arcade/fleet-claim-v1-migration.sql',import.meta.url),'utf8');
  for(const name of ['bullseye_modes_v1','bullseye_modes_v2','hostage_v3',
   'silhouette_v1','silhouette_v2','wildhunt_v1','zombie_campaign_v1']){
-  const start=sql.indexOf('-- arcade_live_signed_claim_'+name+'\\n');
+  const start=sql.indexOf('-- arcade_live_signed_claim_'+name+'\n');
   assert.notEqual(start,-1,name);
   const end=sql.indexOf('-- arcade_live_signed_claim_',start+3);
   const part=sql.slice(start,end<0?undefined:end);
-  assert.match(part,/p_event_id NOT IN \\(2,3\\)/);
+  assert.match(part,/p_event_id NOT IN \(2,3\)/);
   assert.match(part,/p_event_id=3 AND v_event.pilot_only IS DISTINCT FROM false/);
   assert.match(part,/IF p_event_id=2 AND NOT EXISTS/);
   assert.match(part,/monitor_key_inactive/);
