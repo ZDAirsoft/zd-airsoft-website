@@ -8,6 +8,8 @@ on:
       - "netlify/functions/arcade-signed-claim.mjs"
       - "tests/arcade-fleet-v1.test.mjs"
       - "tests/arcade-fleet-claims-compat.test.mjs"
+      - "tests/arcade-fleet-public-feeds.test.mjs"
+      - "netlify/functions/arcade-verified-leaderboard.mjs"
       - "netlify/functions/arcade-silhouette-r1.mjs"
       - "netlify/functions/arcade-silhouette-r2.mjs"
 jobs:
@@ -21,4 +23,4 @@ jobs:
         with:
           node-version: "22"
       - name: Focused fleet and Wild Hunt tests
-        run: node --test tests/arcade-fleet-v1.test.mjs tests/arcade-wild-hunt-v1.test.mjs tests/arcade-fleet-claims-compat.test.mjs tests/arcade-silhouette-r1.test.mjs
+        run: node --test tests/arcade-fleet-v1.test.mjs tests/arcade-wild-hunt-v1.test.mjs tests/arcade-fleet-claims-compat.test.mjs tests/arcade-silhouette-r1.test.mjs tests/arcade-fleet-public-feeds.test.mjs
