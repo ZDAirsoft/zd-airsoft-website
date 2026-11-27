@@ -44,8 +44,8 @@ export function normalizedSilhouetteMetrics(q){
 }
 export function validSilhouetteReceipt(receipt){
   if(!receipt||receipt.g!=='silhouette-precision'||receipt.rv!==1||
-    !silhouetteMode(receipt.m)||!Number.isSafeInteger(receipt.e)||receipt.e!==2||
-    receipt.d!=='01'||receipt.p!==1||
+    !silhouetteMode(receipt.m)||!((receipt.e===2&&receipt.d==='01'&&receipt.p===1)||
+      (receipt.e===3&&/^[0-9]{2}$/.test(receipt.d||'')&&receipt.d!=='00'&&receipt.p===undefined))||
     !Number.isSafeInteger(receipt.t)||receipt.t<1704067200||receipt.t>4102444800)return false;
   const metrics=normalizedSilhouetteMetrics(receipt.q);
   return metrics!==null&&validSilhouetteMetrics(receipt.m,receipt.s,metrics);

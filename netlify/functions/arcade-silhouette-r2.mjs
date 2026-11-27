@@ -28,7 +28,8 @@ export function validSilhouetteR2Metrics(mode,score,m){
 }
 export function validSilhouetteR2Receipt(r){
  if(!r||r.g!=='silhouette-precision'||r.rv!==2||!silhouetteMode(r.m)||
-    !Number.isSafeInteger(r.e)||r.e!==2||r.d!=='01'||r.p!==1||
+    !((r.e===2&&r.d==='01'&&r.p===1)||
+      (r.e===3&&/^[0-9]{2}$/.test(r.d||'')&&r.d!=='00'&&r.p===undefined))||
     !uint(r.t,1704067200,4102444800))return false;
  return validSilhouetteR2Metrics(r.m,r.s,normalizeSilhouetteR2Metrics(r.q));
 }
