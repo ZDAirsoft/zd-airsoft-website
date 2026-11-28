@@ -26,7 +26,7 @@ function safeReport(doc){
   const wildHunt=(r)=>isObject(r)&&r.gameId==='wild-hunt'&&r.scoringRevision===1&&
     ['easy','medium','hard'].includes(r.modeId);
   const wildHuntMetrics=(r,withImpacts)=>{
-    const hard=r.modeId==='hard', goal=hard?50:25, cap=hard?50:r.modeId==='medium'?125:250;
+    const hard=r.modeId==='hard', goal=hard?50:25, cap=hard?100:r.modeId==='medium'?125:250;
     return integer(r.score,0,hard?29200:2147483647)&&integer(r.timeMs,0,2147483647)&&
       integer(r.harvests,goal,goal)&&integer(r.vitalHits,0,cap)&&integer(r.coverHits,0,cap)&&
       integer(r.basePoints,0,2147483647)&&integer(r.sasquatchUplift,0,2147483647)&&
@@ -95,7 +95,7 @@ function safeReport(doc){
   });
   const personalBests=doc.personalBests.map(r=>{
     if(wildHunt(r)){
-      if(!wildHuntMetrics(r,false)||!integer(r.registeredImpacts,25,r.modeId==='hard'?50:r.modeId==='medium'?125:250)||
+      if(!wildHuntMetrics(r,false)||!integer(r.registeredImpacts,25,r.modeId==='hard'?100:r.modeId==='medium'?125:250)||
         typeof r.achievedAt!=='string'||!Number.isFinite(Date.parse(r.achievedAt)))throw Error('wildhunt_best');
       return {gameId:r.gameId,modeId:r.modeId,scoringRevision:1,score:r.score,achievedAt:r.achievedAt,
         registeredImpacts:r.registeredImpacts,timeMs:r.timeMs,harvests:r.harvests,vitalHits:r.vitalHits,
